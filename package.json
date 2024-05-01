@@ -30,6 +30,10 @@
     "electron": "^30.0.1"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7",
+    "sha.js": "^2.4.11",
+    "socket.io": "^4.7.5"
   }
 }

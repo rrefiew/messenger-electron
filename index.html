@@ -11,19 +11,33 @@
       http-equiv="X Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
     />
-    <title>Привет из Electron renderer!</title>
+    <link rel="stylesheet" href="style.css" />
+    <title>Nesil</title>
   </head>
   <body>
-    <div id="chat">
-      <div id="messages"></div>
-      <form id="messageForm">
-        <input
-          type="text"
-          id="messageInput"
-          placeholder="Введите сообщение..."
-        />
-        <button type="submit">Отправить</button>
-      </form>
+    <div class="header">
+      <div class="logo"><img src="./logo.png"></div>
+    </div>
+
+    <div class="container">
+      <div class="text-left">
+        <p class="lead">Укажите ваше имя и начинайте переписку</p>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <h3>Форма сообщений</h3>
+          <form id="messForm">
+            <label for="message">Сообщение</label>
+            <textarea name="message" id="message" class="form-control" 
+            placeholder="Введите сообщение"></textarea> <br>
+            <input type="button" value="Отправить" class="btn-danger">
+          </form>
+        </div>
+        <div class="col-6">
+          <h3>Сообщения</h3>
+          <div id="all_mess"></div>
+        </div>
+      </div>
     </div>
   </body>
   <script src="./renderer.js"></script>
