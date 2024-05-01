@@ -9,19 +9,33 @@
   <body>
     <div class="loginFormContainer">
       <div class="loginFormTitle"><h1>Добро пожаловать в Nesil!</h1></div>
-      <div class="loginFormDescription"><h3>Пожалуйста, пройди регистрацию или войди в уже существующий аккаунт</h3>
+      <div class="loginFormDescription">
+        <h3>
+          Пожалуйста, пройди регистрацию или войди в уже существующий аккаунт
+        </h3>
       </div>
       <form id="loginForm">
-        <label for="username">Никнейм:</label> 
-        <input type="text" id="username" name="username" required /><br/>
+        <label for="username">Никнейм:</label>
+        <input type="text" id="username" name="username" required /><br />
         <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required/><br/><br/>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+        /><br /><br />
         <div class="entry_container">
-        <input type="submit" id="submButtonRegistr" value="Зарегистрироваться" />
-        <p class="login button"> Уже есть аккаунт?
-        <input type="submit" id="submButtonEntry" value="Войти" /></p>
-      </div>
-      <div class="loginFormKot"><img src="kot.png"/></div>
+          <input
+            type="submit"
+            id="submButtonRegistr"
+            value="Зарегистрироваться"
+          />
+          <p class="login button">
+            Уже есть аккаунт?
+            <input type="submit" id="submButtonEntry" value="Войти" />
+          </p>
+        </div>
+        <div class="loginFormKot"><img src="kot.png" /></div>
       </form>
     </div>
     <script src="script.js"></script>

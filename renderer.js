@@ -1,5 +1,5 @@
-var mysql = require("mysql2");
-var shajs = require("sha.js");
+import { sha256 } from "sha.js";
+import { createConnection } from "mysql2";
 
 const func = async () => {
   const response = await window.versions.ping();
@@ -8,7 +8,7 @@ const func = async () => {
 
 func();
 
-var connection = mysql.createConnection({
+var connection = createConnection({
   host: "nadya59k.beget.tech",
   user: "nadya59k_55",
   password: "nZU6%Dw4",
@@ -22,9 +22,11 @@ let username = document.getElementById("username").value;
 let password = document.getElementById("password").value;
 
 let encrypt = (passwrd) => {
-  let encrr_pas = new shajs.sha256(`${password}`).update("42").digest("hex");
+  let encrr_pas = new sha256(`${password}`).update("42").digest("hex");
   return encrr_pas;
 };
+
+console.log(`${password}`);
 
 let encrypted_password = encrypt(password);
 

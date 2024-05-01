@@ -12,13 +12,14 @@ const path = require("node:path");
 //функция createWindow() загружает веб-страницу в новый экземпляр BrowserWindow
 const createWindow = () => {
   const win = new BrowserWindow({
-    width:800,
+    width: 800,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
   win.maximize();
+  win.webContents.openDevTools();
   win.loadFile("login.html");
 };
 
