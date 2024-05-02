@@ -1,15 +1,22 @@
 const express = require("express");
 var mysql = require("mysql2");
 var sha = require("sha.js");
+const crypto = require("crypto");
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
-function encrypt(password) {
-  let encrr_pas = new sha.sha256(`${password}`).update("42").digest("hex");
-  return encrr_pas;
+function generateSalt() {
+  return crypto.randomBytes(16).toString("hex");
+}
+
+function encrypt(password, salt) {
+  const combined = salt + password;
+  // Hash the combined string
+  const hash = sha("sha256").update(combined).digest("hex");
+  return [hash, salt];
 }
 
 function convertDatabaseSelectResponseToJson(results, fields) {
@@ -54,14 +61,19 @@ app.get(
   "/danger_zone/users/get_is_user_password_correct/id/:id/password/:password",
   (req, res) => {
     connection.query(
-      `SELECT password FROM users_data WHERE id = '${req.params.id}'`,
+      `SELECT password, salt FROM users_data WHERE id = '${req.params.id}'`,
       (error, results, fields) => {
         if (error) {
           console.error("Error executing query: " + error);
           return;
         }
+
         let answer = {
-          isCorrect: encrypt(req.params.password) === results.password,
+          encrypt: encrypt(req.params.password, results[0].salt),
+          just_password: results[0].password,
+          isCorrect:
+            encrypt(req.params.password, results[0].salt)[0] ===
+            results[0].password,
         };
         res.send(answer);
       }
@@ -80,10 +92,9 @@ app.post("/danger_zone/users/insert_new_user_into_database/", (req, res) => {
   if (!UserData.hasOwnProperty("password")) {
     res.status(400).send("Json must have password in it");
   }
+  const [hash, salt] = encrypt(UserData.password, generateSalt());
   connection.query(
-    `INSERT INTO users_data(username, password) VALUES ('${
-      UserData.username
-    }', '${encrypt(UserData.password)}')`,
+    `INSERT INTO users_data(username, password, salt) VALUES ('${UserData.username}', '${hash}', '${salt}')`,
     (error, results, fields) => {
       if (error) {
         console.error("Error executing query: " + error);
@@ -124,14 +135,16 @@ app.get(
   "/users/get_is_user_password_correct/id/:id/encrypted_passw/:encrypted_password",
   (req, res) => {
     connection.query(
-      `SELECT password FROM users_data WHERE id = '${req.params.id}'`,
+      `SELECT password, salt FROM users_data WHERE id = '${req.params.id}'`,
       (error, results, fields) => {
         if (error) {
           console.error("Error executing query: " + error);
           return;
         }
         let answer = {
-          isCorrect: res.params.encrypted_password === results.password,
+          isCorrect:
+            encrypt(res.params.encrypted_password, resulsts[0].salt) ===
+            results[0].password,
         };
         res.send(answer);
       }

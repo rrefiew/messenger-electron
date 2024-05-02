@@ -25,6 +25,26 @@ function getCookie(cname) {
   return "";
 }
 
+async function insertNewUserIntoDatabase(new_user_username, new_user_password) {
+  try {
+    const response = await fetch(
+      `${SiteLocation}/danger_zone/users/insert_new_user_into_database/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: new_user_username,
+          password: new_user_password,
+        }),
+      }
+    );
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
 async function getFirstUserIdFromName(username) {
   try {
     const response = await fetch(
@@ -70,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
           );
           return;
         }
-        checkIfPasswordIsCorrect(user_id, username).then((isCorrect) => {
+        checkIfPasswordIsCorrect(user_id, password).then((isCorrect) => {
           if (!isCorrect) {
             alert("Неверный пароль!");
           } else {
@@ -91,13 +111,15 @@ document.addEventListener("DOMContentLoaded", function () {
       let username = document.getElementById("username").value;
       let password = document.getElementById("password").value;
 
-      let user_id = getUserIdFromName(username);
-      // Значить пользователь уже существует с таким именем. Таких мы не регестрируем.
-      if (user_id != null) {
-        // TODO: Добавить функцию которая говорит пользователю что он говнарь попытался использовать уже созданный ник
-        console.log("TODO: Add implementation");
-        return;
-      }
+      getFirstUserIdFromName(username).then((user_id) => {
+        if (user_id != null) {
+          console.log(
+            "TODO: Add implementation for kickcing user because he has a name in the database which is weird"
+          );
+          return;
+        }
+        insertNewUserIntoDatabase(username, password);
+      });
 
       // TODO: Add Insert
 
