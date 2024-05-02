@@ -1,3 +1,8 @@
+let encrypt = (passwrd) => {
+  let encrr_pas = new shajs.sha256(`${password}`).update("42").digest("hex");
+  return encrr_pas;
+};
+
 // Функция для установки cookie
 function setCookie(cname, cvalue, exdays) {
   const d = new Date();
@@ -28,9 +33,32 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("submit", function (event) {
       event.preventDefault(); // Предотвращаем стандартную отправку формы
       console.log("Tried to registrate!");
+
       // Получение значений полей формы
       let username = document.getElementById("username").value;
-      let password = document.getElementById("password").value;
+      let password = encrypt(document.getElementById("password").value);
+
+      let user_id;
+      fetch(`http://localhost:3000/users/get_user_id_from_name/${username}`)
+        .then((response) => response.json())
+        .then((user_id_json) => {
+          console.log(user_id_json);
+          user_id = user_id_json.id;
+        });
+
+      if (user_id == null) {
+        console.log("WTFFFF");
+        return;
+      }
+
+      fetch(
+        `http://localhost:3000/users/get_is_user_password_correct/${user_id}/${password}`
+      )
+        .then((response) => response.json())
+        .then((is_password_correct_json) =>
+          console.log(is_password_correct_json)
+        );
+      return;
       let user = getCookie(`${username}`);
 
       if (username === "" || password === "") {
