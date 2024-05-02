@@ -66,6 +66,27 @@ app.get("/users/get_user_from_id/:id", (req, res) => {
   connection.end();
 });
 
+app.get(
+  "/users/get_is_user_password_correct/:id/:encrypted_password",
+  (req, res) => {
+    connection.connect();
+    connection.query(
+      `SELECT password FROM users_data WHERE id = ${req.params.id}`,
+      (error, results, fields) => {
+        if (error) {
+          console.error("Error executing query: " + error);
+          return;
+        }
+        let answer = {
+          isCorrect: res.params.encrypted_password === results.password,
+        };
+        res.send(answer);
+      }
+    );
+    connection.end();
+  }
+);
+
 app.listen(port, () => {
   console.log(`Backend server listening at http://localhost:${port}`);
 });
