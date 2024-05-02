@@ -5,6 +5,19 @@ var shajs = require("sha.js");
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
+function convertDatabaseSelectResponseToJson(results, fields) {
+  return results.map((row) => {
+    // Convert each row to a JSON object
+    const rowJson = {};
+    fields.forEach((field) => {
+      rowJson[field.name] = row[field.name];
+    });
+    return rowJson;
+  });
+}
+
 const encrypt = (password) => {
   let encrr_pas = new sha256(`${passwords}`).update("42").digest("hex");
   return encrr_pas;
@@ -17,7 +30,10 @@ let connection = mysql.createConnection({
   user: "nadya59k_55",
   password: "nZU6%Dw4",
   database: "nadya59k_55",
+  connectTimeout: 30000,
 });
+
+connection.connect();
 
 app.get("/", (req, res) => {
   res.send("Hello from the backend!");
@@ -25,26 +41,29 @@ app.get("/", (req, res) => {
 
 app.get("/users/get_all_user_ids", (req, res) => {
   connection.connect();
-  connection.query(`SELECT * FROM users_data`, (error, results, fields) => {
+  connection.query(`SELECT id FROM users_data`, (error, results, fields) => {
     if (error) {
       console.error("Error executing query: " + error);
       return;
     }
-    const rowsAsJson = results.map((row) => {
-      // Convert each row to a JSON object
-      const rowJson = {};
-      fields.forEach((field) => {
-        rowJson[field.name] = row[field.name];
-      });
-      return rowJson;
-    });
-    res.send(rowsAsJson);
+    res.send(convertDatabaseSelectResponseToJson(results, fields));
   });
   connection.end();
 });
 
 app.get("/users/get_user_from_id/:id", (req, res) => {
-  res.send(req.params);
+  connection.connect();
+  connection.query(
+    `SELECT username FROM users_data WHERE id = ${req.params.id}`,
+    (error, results, fields) => {
+      if (error) {
+        console.error("Error executing query: " + error);
+        return;
+      }
+      res.send(convertDatabaseSelectResponseToJson(results, fields));
+    }
+  );
+  connection.end();
 });
 
 app.listen(port, () => {
