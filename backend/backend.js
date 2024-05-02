@@ -1,11 +1,16 @@
 const express = require("express");
 var mysql = require("mysql2");
-var shajs = require("sha.js");
+var sha = require("sha.js");
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+
+function encrypt(password) {
+  let encrr_pas = new sha.sha256(`${password}`).update("42").digest("hex");
+  return encrr_pas;
+}
 
 function convertDatabaseSelectResponseToJson(results, fields) {
   return results.map((row) => {
@@ -17,11 +22,6 @@ function convertDatabaseSelectResponseToJson(results, fields) {
     return rowJson;
   });
 }
-
-const encrypt = (password) => {
-  let encrr_pas = new sha256(`${passwords}`).update("42").digest("hex");
-  return encrr_pas;
-};
 
 // Make connection just for the db. Shoukd be changed later
 
@@ -49,9 +49,29 @@ app.get("/users/get_all_user_ids", (req, res) => {
   });
 });
 
+// Does not use encrypted password and just encrypts the password itself
+app.get(
+  "/danger_zone/users/get_is_user_password_correct/id/:id/password/:password",
+  (req, res) => {
+    connection.query(
+      `SELECT password FROM users_data WHERE id = '${req.params.id}'`,
+      (error, results, fields) => {
+        if (error) {
+          console.error("Error executing query: " + error);
+          return;
+        }
+        let answer = {
+          isCorrect: encrypt(req.params.password) === results.password,
+        };
+        res.send(answer);
+      }
+    );
+  }
+);
+
 app.get("/users/get_user_from_id/:id", (req, res) => {
   connection.query(
-    `SELECT username FROM users_data WHERE id = ${req.params.id}`,
+    `SELECT username FROM users_data WHERE id = '${req.params.id}'`,
     (error, results, fields) => {
       if (error) {
         console.error("Error executing query: " + error);
@@ -64,7 +84,7 @@ app.get("/users/get_user_from_id/:id", (req, res) => {
 
 app.get("/users/get_user_id_from_name/:username", (req, res) => {
   connection.query(
-    `SELECT id FROM users_data WHERE username = ${req.params.id}`,
+    `SELECT id FROM users_data WHERE username = '${req.params.username}'`,
     (error, results, fields) => {
       if (error) {
         console.error("Error executing query: " + error);
@@ -76,10 +96,10 @@ app.get("/users/get_user_id_from_name/:username", (req, res) => {
 });
 
 app.get(
-  "/users/get_is_user_password_correct/:id/:encrypted_password",
+  "/users/get_is_user_password_correct/id/:id/encrypted_passw/:encrypted_password",
   (req, res) => {
     connection.query(
-      `SELECT password FROM users_data WHERE id = ${req.params.id}`,
+      `SELECT password FROM users_data WHERE id = '${req.params.id}'`,
       (error, results, fields) => {
         if (error) {
           console.error("Error executing query: " + error);

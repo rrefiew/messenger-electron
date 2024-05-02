@@ -1,7 +1,7 @@
 //импорт модулей Electron (app,BrowserWindow и ipcMain)
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("node:path");
-
+//const crypto = require("node:crypto");
 //const express = require("express");
 //const socketIO = require("socket.i");
 

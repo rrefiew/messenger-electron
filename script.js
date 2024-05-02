@@ -1,9 +1,5 @@
-let encrypt = (passwrd) => {
-  let encrr_pas = new shajs.sha256(`${password}`).update("42").digest("hex");
-  return encrr_pas;
-};
-
 // Функция для установки cookie
+
 function setCookie(cname, cvalue, exdays) {
   const d = new Date();
   d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
@@ -30,29 +26,31 @@ function getCookie(cname) {
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("submButtonRegistr")
-    .addEventListener("submit", function (event) {
-      event.preventDefault(); // Предотвращаем стандартную отправку формы
+    .addEventListener("click", function (event) {
       console.log("Tried to registrate!");
 
       // Получение значений полей формы
       let username = document.getElementById("username").value;
-      let password = encrypt(document.getElementById("password").value);
+      let password = document.getElementById("password").value;
 
       let user_id;
       fetch(`http://localhost:3000/users/get_user_id_from_name/${username}`)
-        .then((response) => response.json())
+        .then((response) => {
+          response.json();
+        })
         .then((user_id_json) => {
-          console.log(user_id_json);
           user_id = user_id_json.id;
-        });
+        })
+        .catch((error) => console.log(error));
 
       if (user_id == null) {
         console.log("WTFFFF");
+        console.log(user_id);
         return;
       }
 
       fetch(
-        `http://localhost:3000/users/get_is_user_password_correct/${user_id}/${password}`
+        `http://localhost:3000/danger_zone/users/get_is_user_password_correct/${user_id}/${password}`
       )
         .then((response) => response.json())
         .then((is_password_correct_json) =>
@@ -74,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
           setCookie("username", user, 30); // Исправлено время жизни cookie
         }
       }
-      // Если аккаунт не существует, устанавливаем cookie и продолжаем отправку формы
+      // Если аккаунт не существует, устана��ливаем cookie и продолжаем отправку формы
       setCookie(username, "registered", 365); // Устанавливаем cookie на 365 дней
       // После успешной отправки формы перенаправляем пользователя
       window.location.href = "index.html";
