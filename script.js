@@ -81,7 +81,9 @@ document.addEventListener("DOMContentLoaded", function () {
     .addEventListener("click", function (event) {
       let username = document.getElementById("username").value;
       let password = document.getElementById("password").value;
-
+      if (username === "" || password === "") {
+        return;
+      }
       // THIS WORKS
       getFirstUserIdFromName(username).then((user_id) => {
         if (user_id == null) {
@@ -92,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         checkIfPasswordIsCorrect(user_id, password).then((isCorrect) => {
           if (!isCorrect) {
-            alert("Неверный пароль!");
+            console.log("Neverniy parol");
           } else {
             window.location.href = "index.html";
           }
@@ -110,7 +112,9 @@ document.addEventListener("DOMContentLoaded", function () {
       // Получение значений полей формы
       let username = document.getElementById("username").value;
       let password = document.getElementById("password").value;
-
+      if (username === "" || password === "") {
+        return;
+      }
       getFirstUserIdFromName(username).then((user_id) => {
         if (user_id != null) {
           console.log(
@@ -127,16 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // TODO: Add Insert
-
       return;
       let user = getCookie(`${username}`);
 
-      if (username === "" || password === "") {
-        alert("Пожалуйста, заполните все поля.");
-        return; // Прекращаем выполнение функции, если поля пустые
-      }
       // Проверка наличия cookie с именем пользователя
-      else if (user != "") {
+      if (user != "") {
         alert("Welcome again " + user);
       } else {
         user = `${username}`;

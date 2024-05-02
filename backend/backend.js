@@ -69,8 +69,6 @@ app.get(
         }
 
         let answer = {
-          encrypt: encrypt(req.params.password, results[0].salt),
-          just_password: results[0].password,
           isCorrect:
             encrypt(req.params.password, results[0].salt)[0] ===
             results[0].password,
