@@ -38,9 +38,3 @@
 // );
 
 // connection.end();
-fetch("http://localhost:3000/users/get_all_user_ids/")
-  .then((response) => response.json())
-  .then((resp) => console.log(resp))
-  .catch((error) => {
-    console.error(error);
-  });

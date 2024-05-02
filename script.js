@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (!isCorrect) {
             alert("Неверный пароль!");
           } else {
-            alert("Вы угадали пароль йей :)");
+            window.location.href = "index.html";
           }
         });
       });
