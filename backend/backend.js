@@ -69,6 +69,31 @@ app.get(
   }
 );
 
+app.post("/danger_zone/users/insert_new_user_into_database/", (req, res) => {
+  if (req.headers["content-type"] !== "application/json") {
+    res.status(400).send("Send valid Json");
+  }
+  const UserData = req.body;
+  if (!UserData.hasOwnProperty("username")) {
+    res.status(400).send("Json must have username in it");
+  }
+  if (!UserData.hasOwnProperty("password")) {
+    res.status(400).send("Json must have password in it");
+  }
+  connection.query(
+    `INSERT INTO users_data(username, password) VALUES ('${
+      UserData.username
+    }', '${encrypt(UserData.password)}')`,
+    (error, results, fields) => {
+      if (error) {
+        console.error("Error executing query: " + error);
+        return;
+      }
+      res.status(201).send("User created");
+    }
+  );
+});
+
 app.get("/users/get_user_from_id/:id", (req, res) => {
   connection.query(
     `SELECT username FROM users_data WHERE id = '${req.params.id}'`,

@@ -71,7 +71,11 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
         checkIfPasswordIsCorrect(user_id, username).then((isCorrect) => {
-          console.log("Is password correct?" + isCorrect);
+          if (!isCorrect) {
+            alert("Неверный пароль!");
+          } else {
+            alert("Вы угадали пароль йей :)");
+          }
         });
       });
     });
