@@ -1,5 +1,7 @@
 // Функция для установки cookie
 
+const SiteLocation = "http://localhost:3000";
+
 function setCookie(cname, cvalue, exdays) {
   const d = new Date();
   d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
@@ -23,6 +25,58 @@ function getCookie(cname) {
   return "";
 }
 
+async function getFirstUserIdFromName(username) {
+  try {
+    const response = await fetch(
+      `${SiteLocation}/users/get_user_id_from_name/${username}`
+    );
+    const user_id_json = await response.json();
+    if (user_id_json.length > 0) {
+      return user_id_json[0].id;
+    } else {
+      throw new Error("User ID not found");
+    }
+  } catch (error) {
+    console.log(error);
+    return null; // or handle the error as needed
+  }
+}
+
+async function checkIfPasswordIsCorrect(user_id, password) {
+  try {
+    const response = await fetch(
+      `${SiteLocation}/danger_zone/users/get_is_user_password_correct/id/${user_id}/password/${password}`
+    );
+    const is_password_correct_json = await response.json();
+    return is_password_correct_json.isCorrect;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  document
+    .getElementById("submButtonEntry")
+    .addEventListener("click", function (event) {
+      let username = document.getElementById("username").value;
+      let password = document.getElementById("password").value;
+
+      // THIS WORKS
+      getFirstUserIdFromName(username).then((user_id) => {
+        if (user_id == null) {
+          console.log(
+            "TODO: Add implementation for kickcing user because he has no name"
+          );
+          return;
+        }
+        checkIfPasswordIsCorrect(user_id, username).then((isCorrect) => {
+          console.log("Is password correct?" + isCorrect);
+        });
+      });
+    });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("submButtonRegistr")
@@ -33,29 +87,16 @@ document.addEventListener("DOMContentLoaded", function () {
       let username = document.getElementById("username").value;
       let password = document.getElementById("password").value;
 
-      let user_id;
-      fetch(`http://localhost:3000/users/get_user_id_from_name/${username}`)
-        .then((response) => {
-          response.json();
-        })
-        .then((user_id_json) => {
-          user_id = user_id_json.id;
-        })
-        .catch((error) => console.log(error));
-
-      if (user_id == null) {
-        console.log("WTFFFF");
-        console.log(user_id);
+      let user_id = getUserIdFromName(username);
+      // Значить пользователь уже существует с таким именем. Таких мы не регестрируем.
+      if (user_id != null) {
+        // TODO: Добавить функцию которая говорит пользователю что он говнарь попытался использовать уже созданный ник
+        console.log("TODO: Add implementation");
         return;
       }
 
-      fetch(
-        `http://localhost:3000/danger_zone/users/get_is_user_password_correct/${user_id}/${password}`
-      )
-        .then((response) => response.json())
-        .then((is_password_correct_json) =>
-          console.log(is_password_correct_json)
-        );
+      // TODO: Add Insert
+
       return;
       let user = getCookie(`${username}`);
 
