@@ -118,7 +118,12 @@ document.addEventListener("DOMContentLoaded", function () {
           );
           return;
         }
-        insertNewUserIntoDatabase(username, password);
+        insertNewUserIntoDatabase(username, password).then((response) => {
+          console.log("New user created " + response);
+          if (response) {
+            window.location.href = "index.html";
+          }
+        });
       });
 
       // TODO: Add Insert
