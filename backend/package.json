@@ -1,0 +1,22 @@
+{
+  "name": "messenger-backend",
+  "version": "1.0.0",
+  "description": "",
+  "private": "true",
+  "main": "backend.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "npm run build && node ./backend.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rrefiew/messenger-electron.git"
+  },
+  "author": "rrefiew",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rrefiew/messenger-electron/issues"
+  },
+  "homepage": "https://github.com/rrefiew/messenger-electron#readme"
+}
