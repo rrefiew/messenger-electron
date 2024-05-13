@@ -1,10 +1,15 @@
+// src/backend.js
+
+import dotenv from "dotenv";
 const express = require("express");
 var mysql = require("mysql2");
 var sha = require("sha.js");
 const crypto = require("crypto");
 
+dotenv.config();
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
