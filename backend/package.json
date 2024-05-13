@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc --build",
     "start": "npm run build && node ./build/backend.js",
+    "dev": "nodemon src/backend.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +24,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
