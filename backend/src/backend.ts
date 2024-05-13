@@ -1,33 +1,39 @@
 // src/backend.js
 
 import dotenv from "dotenv";
-const express = require("express");
+import { FieldPacket, QueryResult } from "mysql2";
+import { Connection } from "mysql2/typings/mysql/lib/Connection";
+import express, { Express, Request, Response } from "express";
 var mysql = require("mysql2");
 var sha = require("sha.js");
 const crypto = require("crypto");
 
 dotenv.config();
 
-const app = express();
+const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-function generateSalt() {
+function generateSalt(): string {
   return crypto.randomBytes(16).toString("hex");
 }
 
-function encrypt(password, salt) {
-  const combined = salt + password;
+function encrypt(password: string, salt: string): string[] {
+  const combined: string = salt + password;
   // Hash the combined string
-  const hash = sha("sha256").update(combined).digest("hex");
+  const hash: string = sha("sha256").update(combined).digest("hex");
   return [hash, salt];
 }
 
-function convertDatabaseSelectResponseToJson(results, fields) {
-  return results.map((row) => {
+// TODO: remove anys
+function convertDatabaseSelectResponseToJson(
+  results: any,
+  fields: FieldPacket[]
+) {
+  return results.map((row: any) => {
     // Convert each row to a JSON object
-    const rowJson = {};
+    let rowJson: any;
     fields.forEach((field) => {
       rowJson[field.name] = row[field.name];
     });
@@ -37,7 +43,7 @@ function convertDatabaseSelectResponseToJson(results, fields) {
 
 // Make connection just for the db. Shoukd be changed later
 
-var connection;
+var connection: Connection;
 
 let db_config = {
   host: "nadya59k.beget.tech",
@@ -47,11 +53,11 @@ let db_config = {
   connectTimeout: 3000000,
 };
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Hello from the backend!");
 });
 
-app.get("/users/get_all_user_ids", (req, res) => {
+app.get("/users/get_all_user_ids", (req: Request, res: Response) => {
   connection.query(`SELECT id FROM users_data`, (error, results, fields) => {
     if (error) {
       console.error("Error executing query: " + error);
@@ -64,10 +70,10 @@ app.get("/users/get_all_user_ids", (req, res) => {
 // Does not use encrypted password and just encrypts the password itself
 app.get(
   "/danger_zone/users/get_is_user_password_correct/id/:id/password/:password",
-  (req, res) => {
+  (req: Request, res: Response) => {
     connection.query(
       `SELECT password, salt FROM users_data WHERE id = '${req.params.id}'`,
-      (error, results, fields) => {
+      (error, results: any, fields) => {
         if (error) {
           console.error("Error executing query: " + error);
           return;
@@ -84,29 +90,32 @@ app.get(
   }
 );
 
-app.post("/danger_zone/users/insert_new_user_into_database/", (req, res) => {
-  if (req.headers["content-type"] !== "application/json") {
-    res.status(400).send("Send valid Json");
-  }
-  const UserData = req.body;
-  if (!UserData.hasOwnProperty("username")) {
-    res.status(400).send("Json must have username in it");
-  }
-  if (!UserData.hasOwnProperty("password")) {
-    res.status(400).send("Json must have password in it");
-  }
-  const [hash, salt] = encrypt(UserData.password, generateSalt());
-  connection.query(
-    `INSERT INTO users_data(username, password, salt) VALUES ('${UserData.username}', '${hash}', '${salt}')`,
-    (error, results, fields) => {
-      if (error) {
-        console.error("Error executing query: " + error);
-        return;
-      }
-      res.status(201).send("User created");
+app.post(
+  "/danger_zone/users/insert_new_user_into_database/",
+  (req: Request, res: Response) => {
+    if (req.headers["content-type"] !== "application/json") {
+      res.status(400).send("Send valid Json");
     }
-  );
-});
+    const UserData = req.body;
+    if (!UserData.hasOwnProperty("username")) {
+      res.status(400).send("Json must have username in it");
+    }
+    if (!UserData.hasOwnProperty("password")) {
+      res.status(400).send("Json must have password in it");
+    }
+    const [hash, salt] = encrypt(UserData.password, generateSalt());
+    connection.query(
+      `INSERT INTO users_data(username, password, salt) VALUES ('${UserData.username}', '${hash}', '${salt}')`,
+      (error, results, fields) => {
+        if (error) {
+          console.error("Error executing query: " + error);
+          return;
+        }
+        res.status(201).send("User created");
+      }
+    );
+  }
+);
 
 app.get("/users/get_user_from_id/:id", (req, res) => {
   connection.query(
@@ -139,14 +148,14 @@ app.get(
   (req, res) => {
     connection.query(
       `SELECT password, salt FROM users_data WHERE id = '${req.params.id}'`,
-      (error, results, fields) => {
+      (error, results: any, fields) => {
         if (error) {
           console.error("Error executing query: " + error);
           return;
         }
         let answer = {
           isCorrect:
-            encrypt(res.params.encrypted_password, resulsts[0].salt) ===
+            encrypt(req.params.encrypted_password, results[0].salt) ===
             results[0].password,
         };
         res.send(answer);
