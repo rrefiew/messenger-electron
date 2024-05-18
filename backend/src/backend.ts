@@ -8,6 +8,8 @@ var mysql = require("mysql2");
 var sha = require("sha.js");
 const crypto = require("crypto");
 
+import * as Handlers from "./handlers/handlers";
+
 dotenv.config();
 
 const app: Express = express();
@@ -24,21 +26,6 @@ function encrypt(password: string, salt: string): string[] {
   // Hash the combined string
   const hash: string = sha("sha256").update(combined).digest("hex");
   return [hash, salt];
-}
-
-// TODO: remove anys
-function convertDatabaseSelectResponseToJson(
-  results: any,
-  fields: FieldPacket[]
-) {
-  return results.map((row: any) => {
-    // Convert each row to a JSON object
-    let rowJson: any;
-    fields.forEach((field) => {
-      rowJson[field.name] = row[field.name];
-    });
-    return rowJson;
-  });
 }
 
 // Make connection just for the db. Shoukd be changed later
@@ -108,16 +95,10 @@ app.post(
 );
 
 app.get("/users/get_user_from_id/:id", (req, res) => {
-  connection.query(
-    `SELECT username FROM users_data WHERE id = '${req.params.id}'`,
-    (error, results, fields) => {
-      if (error) {
-        console.error("Error executing query: " + error);
-        return;
-      }
-      res.send(convertDatabaseSelectResponseToJson(results, fields));
-    }
-  );
+  let id: number = +req.params.id;
+  Handlers.GetUserFromId(id, connection)
+    .catch((_e) => console.log(_e))
+    .then((user) => res.send(user));
 });
 
 app.get("/users/get_user_id_from_name/:username", (req, res) => {
