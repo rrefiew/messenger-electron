@@ -36,19 +36,22 @@ describe("hey", () => {
   it("should get user by id", async () => {
     mysql.query.mockResolvedValueOnce([[{ id: 0, name: "Test Name" }]]);
     let user = await Handlers.GetUserFromId(0, mysql);
-    expect(mysql.createConnection).toBeCalledTimes(0);
-    expect(mysql.query).toBeCalledTimes(1);
-    expect(user).toStrictEqual({ id: 0, name: "Test Name" });
-    //expect(user).toEqual({ id: 1, name: "Test User" });
-  });
-  it("should actually throw an error!", async () => {
-    const mError = new Error("Unable to retrieve rows");
-    mysql.query.mockRejectedValueOnce(mError);
-    let user = await Handlers.GetUserFromId(0, mysql);
 
     expect(mysql.createConnection).toBeCalledTimes(0);
     expect(mysql.query).toBeCalledTimes(1);
-    expect(user).toStrictEqual({ id: -1, name: "not found" });
+    expect(user).toStrictEqual({ id: 0, name: "Test Name" });
+  });
+
+  it("should actually throw an error!", async () => {
+    const mError = new Error("Unable to retrieve rows");
+    mysql.query.mockRejectedValueOnce(mError);
+
+    expect(async () => {
+      await Handlers.GetUserFromId(0, mysql);
+    }).rejects.toThrowError("Unable");
+
+    expect(mysql.createConnection).toBeCalledTimes(0);
+    expect(mysql.query).toBeCalledTimes(1);
   });
 });
 

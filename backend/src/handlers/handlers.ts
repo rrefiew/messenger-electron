@@ -7,6 +7,15 @@ export interface User {
   password?: string;
 }
 
+export class BackendError extends Error {
+  http_error_code: number;
+
+  constructor(httpErrorCode?: number, message?: string) {
+    super(message); // Pass remaining arguments (including vendor specific ones) to parent constructor
+    this.http_error_code = httpErrorCode || 500; // Default to 500 if not provided
+  }
+}
+
 // TODO: remove anys
 function convertDatabaseSelectResponseToJson(
   results: any,
@@ -31,9 +40,11 @@ export async function GetUserFromId(
     let [results] = await connection.query(
       `SELECT username FROM users_data WHERE id = '${id}'`
     );
+
     resultUser = (results as any)[0] as User;
-  } catch (_e) {
-    return { id: -1, name: "not found" };
+  } catch (_e: any) {
+    // Actually add error logic in here
+    return Promise.reject(new BackendError(501, _e.message));
   }
 
   return resultUser;
