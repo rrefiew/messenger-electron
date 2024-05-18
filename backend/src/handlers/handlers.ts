@@ -1,4 +1,5 @@
-import { Connection, FieldPacket } from "mysql2";
+import { Connection, FieldPacket, QueryResult } from "mysql2/promise";
+import { Query } from "mysql2/typings/mysql/lib/protocol/sequences/Query";
 
 export interface User {
   id: number;
@@ -26,14 +27,14 @@ export async function GetUserFromId(
   connection: Connection
 ): Promise<User> {
   let resultUser: User = { id: id, name: "" };
-
-  connection.query(
-    `SELECT username FROM users_data WHERE id = '${id}'`,
-    (error, results, fields) => {
-      if (error) throw error;
-      resultUser = convertDatabaseSelectResponseToJson(results, fields);
-    }
-  );
+  try {
+    let [results] = await connection.query(
+      `SELECT username FROM users_data WHERE id = '${id}'`
+    );
+    resultUser = (results as any)[0] as User;
+  } catch (_e) {
+    return { id: -1, name: "not found" };
+  }
 
   return resultUser;
 }

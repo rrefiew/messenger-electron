@@ -8,7 +8,7 @@
     "build": "tsc --build",
     "start": "npm run build && node ./build/backend.js",
     "dev": "nodemon src/backend.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
