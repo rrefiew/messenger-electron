@@ -57,16 +57,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello from the backend!");
 });
 
-app.get("/users/get_all_user_ids", (req: Request, res: Response) => {
-  connection.query(`SELECT id FROM users_data`, (error, results, fields) => {
-    if (error) {
-      console.error("Error executing query: " + error);
-      return;
-    }
-    res.send(convertDatabaseSelectResponseToJson(results, fields));
-  });
-});
-
 // Does not use encrypted password and just encrypts the password itself
 app.get(
   "/danger_zone/users/get_is_user_password_correct/id/:id/password/:password",
