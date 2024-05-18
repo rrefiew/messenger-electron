@@ -24,7 +24,7 @@ vi.mock("mysql2", () => {
   return { mysql };
 });
 
-describe("hey", () => {
+describe("Getting user info by id", () => {
   beforeAll(() => {
     mysql = new mysql();
   });
