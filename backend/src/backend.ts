@@ -23,7 +23,6 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
 
 io.on("connection", (socket) => {
-  socket.emit("update", "helloworld");
   console.log("new connection!");
 });
 // Make connection just for the db. Shoukd be changed later
@@ -106,6 +105,32 @@ app.get("/users/get_user_id_from_name/:username", async (req, res) => {
     res.status(501).send("Corresponding user was not found");
   }
 });
+
+app.post(
+  "/danger_zone/messages/send_message/",
+  (req: Request, res: Response) => {
+    if (req.headers["content-type"] !== "application/json") {
+      res.status(400).send("Send valid Json");
+    }
+    const MessageData = req.body;
+    if (!MessageData.hasOwnProperty("sender_id")) {
+      res.status(400).send("Json must sender_id in it");
+    }
+    if (!MessageData.hasOwnProperty("peer_id")) {
+      res.status(400).send("Json must peer_id in it");
+    }
+    if (!MessageData.hasOwnProperty("text")) {
+      res.status(400).send("Json must have text in it");
+    }
+    Handlers.PostSendMessage(
+      MessageData.sender_id,
+      MessageData.peer_id,
+      MessageData.text,
+      pool
+    );
+    res.status(201).send("User was created");
+  }
+);
 
 app.get(
   "/danger_zone/messages/get_messages/sender_id/:sender_id/peer_id/:peer_id/number_of_messages/:n",

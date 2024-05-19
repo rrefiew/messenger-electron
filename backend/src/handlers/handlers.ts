@@ -96,6 +96,24 @@ export async function GetDialogueMessages(
   }
 }
 
+export async function PostSendMessage(
+  sender_id: number,
+  peer_id: number,
+  text: string,
+  connection: Connection
+) {
+  try {
+    await connection.query(
+      `INSERT INTO user_messages (text, attachment_id, sender_id, peer_id, sent_at) VALUES ("${text}", ${0}, ${sender_id}, ${peer_id}, "${new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ")}")`
+    );
+  } catch (_e: any) {
+    return Promise.reject(new BackendError(501, _e.message));
+  }
+}
+
 export async function GetUserIdFromName(
   name: string,
   connection: Connection
