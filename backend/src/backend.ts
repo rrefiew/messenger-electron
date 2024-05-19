@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { FieldPacket, QueryResult } from "mysql2";
 import { Connection, createPool, Pool } from "mysql2/promise";
 import express, { Express, Request, Response } from "express";
+const cors = require("cors");
 //var mysql = require("mysql2");
 
 import * as Handlers from "./handlers/handlers";
@@ -11,9 +12,10 @@ import * as Handlers from "./handlers/handlers";
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(express.json());
+app.use(cors());
 
 // Make connection just for the db. Shoukd be changed later
 
@@ -95,6 +97,22 @@ app.get("/users/get_user_id_from_name/:username", async (req, res) => {
     res.status(501).send("Corresponding user was not found");
   }
 });
+
+app.get(
+  "/danger_zone/messages/get_messages/sender_id/:sender_id/peer_id/:peer_id/number_of_messages/:n",
+  async (req, res) => {
+    try {
+      const users = await Handlers.GetDialogueMessages(
+        +req.params.sender_id,
+        +req.params.peer_id,
+        +req.params.n
+      );
+      res.status(201).send(users);
+    } catch (_e: any) {
+      // res.status(501).send(_e);
+    }
+  }
+);
 
 app.listen(port, () => {
   //connection.connect();

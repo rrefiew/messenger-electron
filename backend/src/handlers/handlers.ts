@@ -1,6 +1,7 @@
 import { Connection, FieldPacket, QueryResult } from "mysql2/promise";
 var sha = require("sha.js");
 const crypto = require("crypto");
+import * as SharedTypes from "../../../shared_types/types";
 import { Query } from "mysql2/typings/mysql/lib/protocol/sequences/Query";
 
 function generateSalt(): string {
@@ -73,6 +74,21 @@ export async function GetUserFromId(
   }
 
   return resultUser;
+}
+
+export async function GetDialogueMessages(
+  sender_id: number,
+  peer_id: number,
+  n: number
+): Promise<SharedTypes.UserMessage[]> {
+  return [
+    {
+      id: 0,
+      text: "AAAAAYUAYAYAY",
+      sender_id: sender_id,
+      peer_id: peer_id,
+    },
+  ];
 }
 
 export async function GetUserIdFromName(

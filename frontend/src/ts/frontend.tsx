@@ -8,7 +8,7 @@ export class Dialogue {
   }
 }
 
-const SiteLocation = "http://localhost:3000";
+const SiteLocation = "http://localhost:3001";
 
 let current_dialogue: Dialogue | null = null;
 
@@ -34,8 +34,10 @@ async function getLastMessages(
   let response = await fetch(
     `${SiteLocation}/danger_zone/messages/get_messages/sender_id/${user_id}/peer_id/${dialogue.peer_id}/number_of_messages/${n}`
   );
+  console.log(response);
   if (response.ok) {
     let value: SharedTypes.UserMessage[] = await response.json();
+
     return value;
   } else {
     Promise.reject(new Error(`Something went wrong` + response));
@@ -52,12 +54,15 @@ export function ChatMessage({
 }) {
   return (
     <div>
-      <p>message_text</p>
+      <p>{message_text}</p>
     </div>
   );
 }
 
 export function DialogueRoom() {
+  if (current_dialogue === null) {
+    current_dialogue = new Dialogue(100);
+  }
   const userId = window.localStorage.getItem("userid");
   if (userId === null) {
     return (
@@ -67,15 +72,16 @@ export function DialogueRoom() {
     );
   }
   if (current_dialogue === null) {
-    return <></>;
+    return <>Please select a dialogue</>;
   }
 
   const [messages, setMessages] = React.useState<SharedTypes.UserMessage[]>([]);
 
   React.useEffect(() => {
     const fetchMessages = async () => {
+      console.log("fetchmessages");
       if (current_dialogue !== null) {
-        getLastMessages(+userId, current_dialogue, 15);
+        setMessages(await getLastMessages(+userId, current_dialogue, 15));
       }
     };
 
@@ -87,6 +93,7 @@ export function DialogueRoom() {
       {messages &&
         messages.map((msg) => (
           <ChatMessage
+            key={msg.id}
             message_id={msg.id}
             message_text={msg.text}
           ></ChatMessage>
