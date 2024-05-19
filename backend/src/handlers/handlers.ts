@@ -84,6 +84,9 @@ export async function GetUserIdFromName(
       `SELECT id FROM users_data WHERE username = '${name}'`
     );
     const user = (results as any)[0] as User;
+    if (!user) {
+      return Promise.reject(new BackendError(501, "User was not found"));
+    }
     if (user.id === undefined) {
       return Promise.reject("User was not found");
     }

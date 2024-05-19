@@ -67,8 +67,8 @@ async function checkIfPasswordIsCorrect(user_id, password) {
     const response = await fetch(
       `${SiteLocation}/danger_zone/users/get_is_user_password_correct/id/${user_id}/password/${password}`
     );
-    const is_password_correct_json = await response.json();
-    return is_password_correct_json.isCorrect;
+
+    return response;
   } catch (error) {
     console.log(error);
     return false;
@@ -115,19 +115,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (username === "" || password === "") {
         return;
       }
-      getFirstUserIdFromName(username).then((user_id) => {
-        if (user_id != null) {
-          console.log(
-            "TODO: Add implementation for kickcing user because he has a name in the database which is weird"
-          );
-          return;
+
+      // добавить проверку на существование пользователя
+      insertNewUserIntoDatabase(username, password).then((response) => {
+        console.log("New user created " + response);
+        if (response) {
+          window.location.href = "index.html";
         }
-        insertNewUserIntoDatabase(username, password).then((response) => {
-          console.log("New user created " + response);
-          if (response) {
-            window.location.href = "index.html";
-          }
-        });
       });
 
       // TODO: Add Insert
