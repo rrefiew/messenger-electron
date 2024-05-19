@@ -1,4 +1,5 @@
 import * as SharedTypes from "../../../shared_types/types";
+import * as React from "react";
 
 export class Dialogue {
   peer_id: number;
@@ -21,4 +22,8 @@ export async function sendMessage(
   }
 
   return true;
+}
+
+function DialogueRoom() {
+  return <p>Helloworld</p>;
 }
