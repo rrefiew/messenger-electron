@@ -1,11 +1,11 @@
-* {
-  font-family: Arial, sans-serif;
+*{
   background-color: rgb(24, 23, 23);
+  text-decoration: none;
 }
-
 body {
+  font-family: Arial, sans-serif;
   flex-wrap: wrap;
-  margin: 0;
+  margin: 0 auto;
 }
 
 label {
@@ -26,21 +26,20 @@ input[type="password"] {
     flex-wrap: wrap;
     align-items: center;
     gap: 0px 40px;
-    justify-content: flex-start;
-    gap: 150px;
-    margin: 0% 5%;
+    justify-content: space-around;
 }
 
-input[type="submit"] {
-  padding: 10px 20px;
-  background-color: #236493;
+
+input[type="button"] {
+  padding: 5px 10px;
+  background-color: #3f3c3c;
   color: azure;
   border: none;
   cursor: pointer;
 }
 
-input[type="submit"]:hover {
-  background-color: #18537e;
+input[type="button"]:hover {
+  background-color: #435c6e;
 }
 
 .loginFormTitle h1{    
@@ -55,9 +54,10 @@ input[type="submit"]:hover {
 .loginFormDescription h3{
     display: flex;
     justify-content: center;
-    margin-top: 30px;
-    margin-bottom: 0;
+    padding-top: 30px;
+    margin: 0 auto;
     color:#777777;
+    background-color: rgb(24, 23, 23);
 }
 
 #loginForm{
@@ -65,14 +65,12 @@ input[type="submit"]:hover {
     flex-direction: column;
     flex-wrap: wrap;
     align-content: center;
-    padding: 5px 10%;
-    margin: 10px 20px;
+    padding: 10px 20px;
     color:#777777;
+    background-color: rgb(24, 23, 23);
 }
 
 .loginFormKot img{
-    width: 100px;
-    height: 100px;
     border: solid #ffffff 1px;
     border-radius: 15px;
 }
@@ -80,12 +78,86 @@ input[type="submit"]:hover {
 .loginFormKot{
     display: flex;
     justify-content: flex-end;
-    padding-bottom: 10px;
 }
 
-.logo img{
-    width: 130px;
-    height: 60px;
-    border: solid black 1px;
-    border-radius: 15px;
+.text-left h2{
+  display: flex;
+  justify-content: center;
+  color: #c8d6d6;
+}
+
+.col-4{
+  display: flex;
+  align-items: baseline
+}
+.col-4 h2{
+  color: #c8d6d6;
+  margin: 50px 400px;
+}
+
+.username{
+  margin: 20px 300px;
+  color: #c8d6d6;
+}
+input[type="txt"] {
+  margin: 0px 300px;
+  background-color: #243d4e;
+}
+
+.message{
+  margin: 40px 300px 5px;
+  color: #c8d6d6;
+}
+
+.form-control{
+  margin: 10px 300px;
+  color: #c8d6d6;
+  background-color: #243d4e;
+}
+
+.btn-danger{
+  margin: 10px 300px;
+}
+
+.col-4 h3{
+  color: #c8d6d6;
+}
+
+.header_container img {
+  border: solid black 1px;
+  border-radius: 15px;
+  margin: 10px;
+  width: 10%;
+  height: 10%;
+  background-color: black;
+}
+
+.header_container{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.return_to_registration p{
+  color: #c8d6d6;
+  margin-right: 10px
+}
+
+.banner_left img{
+  position: fixed;
+  top: 0;
+  height: 100%; 
+  width:20%;
+}
+
+.banner_left {
+  left: 0;
+}
+
+.banner_right {
+  right: 0;
+}
+
+.container {
+  margin: 0 100px; /* Учитываем ширину баннеров для основного контента */
 }
