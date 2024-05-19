@@ -71,16 +71,6 @@ export function ChatMessage({
 const socket = io(SiteLocation);
 socket.connect();
 
-setInterval(() => {
-  console.log("aaaa");
-  sendMessage({
-    id: 0,
-    peer_id: 100,
-    sender_id: 0,
-    text: "heyheyhey!",
-  });
-}, 5000);
-
 export function DialogueRoom() {
   if (current_dialogue === null) {
     current_dialogue = new Dialogue(100);
