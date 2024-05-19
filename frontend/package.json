@@ -1,0 +1,17 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "npm run build && node ./build/frontend.js",
+    "dev": "nodemon src/ts/frontend.ts",
+    "test": "vitest"
+  },
+  "author": "rrefiew",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^5.4.5"
+  }
+}

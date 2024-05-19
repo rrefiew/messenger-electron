@@ -77,28 +77,41 @@ async function checkIfPasswordIsCorrect(user_id, password) {
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("submButtonEntry")
-    .addEventListener("click", function (event) {
+    .addEventListener("click", async function (event) {
       let username = document.getElementById("username").value;
       let password = document.getElementById("password").value;
       if (username === "" || password === "") {
         return;
       }
       // THIS WORKS
-      getFirstUserIdFromName(username).then((user_id) => {
+      getFirstUserIdFromName(username).then(async (user_id) => {
         if (user_id == null) {
           console.log(
             "TODO: Add implementation for kickcing user because he has no name"
           );
           return;
         }
-        checkIfPasswordIsCorrect(user_id, password).then((isCorrect) => {
-          if (!isCorrect) {
-            console.log("Neverniy parol");
-          } else {
-            window.location.href = "index.html";
-          }
-        });
+        let isPasswordCorrect = await checkIfPasswordIsCorrect(
+          user_id,
+          password
+        );
+
+        try {
+          window.localStorage.setItem(
+            "userid",
+            await getFirstUserIdFromName(username)
+          );
+        } catch (_e) {
+          console.log("Could not create localstorage! We cannot procceed");
+          return;
+        }
       });
+
+      if (!isCorrect) {
+        console.log("Neverniy parol");
+      } else {
+        window.location.href = "index.html";
+      }
     });
 });
 
@@ -129,11 +142,22 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       console.log("userExists");
-      insertNewUserIntoDatabase(username, password).then((response) => {
-        console.log("New user created " + response);
-        if (response) {
-          window.location.href = "index.html";
-        }
-      });
+      let response = await insertNewUserIntoDatabase(username, password);
+
+      if (!response) {
+        return;
+      }
+
+      try {
+        window.localStorage.setItem(
+          "userid",
+          await getFirstUserIdFromName(username)
+        );
+      } catch (_e) {
+        console.log("Could not create localstorage! We cannot procceed");
+        return;
+      }
+
+      window.location.href = "index.html";
     });
 });
