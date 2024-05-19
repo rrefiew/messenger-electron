@@ -50,11 +50,10 @@ async function getFirstUserIdFromName(username) {
     const response = await fetch(
       `${SiteLocation}/users/get_user_id_from_name/${username}`
     );
-    const user_id_json = await response.json();
-    if (user_id_json.length > 0) {
-      return user_id_json[0].id;
+    if (response.status === 201) {
+      return await response.json();
     } else {
-      throw new Error("User ID not found");
+      return null;
     }
   } catch (error) {
     console.log(error);
@@ -106,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("submButtonRegistr")
-    .addEventListener("click", function (event) {
+    .addEventListener("click", async function (event) {
       console.log("Tried to registrate!");
 
       // Получение значений полей формы
@@ -117,29 +116,24 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // добавить проверку на существование пользователя
+      try {
+        let userExists;
+        userExists = !!(await getFirstUserIdFromName(username));
+        console.log(userExists);
+        if (userExists) {
+          return;
+        }
+      } catch (_e) {
+        console.log(_e);
+        return;
+      }
+
+      console.log("userExists");
       insertNewUserIntoDatabase(username, password).then((response) => {
         console.log("New user created " + response);
         if (response) {
           window.location.href = "index.html";
         }
       });
-
-      // TODO: Add Insert
-      return;
-      let user = getCookie(`${username}`);
-
-      // Проверка наличия cookie с именем пользователя
-      if (user != "") {
-        alert("Welcome again " + user);
-      } else {
-        user = `${username}`;
-        if (user != "" && user != null) {
-          setCookie("username", user, 30); // Исправлено время жизни cookie
-        }
-      }
-      // Если аккаунт не существует, устана��ливаем cookie и продолжаем отправку формы
-      setCookie(username, "registered", 365); // Устанавливаем cookie на 365 дней
-      // После успешной отправки формы перенаправляем пользователя
-      window.location.href = "index.html";
     });
 });

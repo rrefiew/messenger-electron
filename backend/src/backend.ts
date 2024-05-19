@@ -92,7 +92,7 @@ app.get("/users/get_user_id_from_name/:username", async (req, res) => {
     const id = await Handlers.GetUserIdFromName(req.params.username, pool);
     res.status(201).send(id.toString());
   } catch (_e: any) {
-    console.log(_e);
+    res.status(501).send("Corresponding user was not found");
   }
 });
 
