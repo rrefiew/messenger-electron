@@ -2,6 +2,7 @@ import { Connection, FieldPacket, QueryResult } from "mysql2/promise";
 var sha = require("sha.js");
 const crypto = require("crypto");
 import * as SharedTypes from "../../../shared_types/types";
+
 import { Query } from "mysql2/typings/mysql/lib/protocol/sequences/Query";
 
 function generateSalt(): string {

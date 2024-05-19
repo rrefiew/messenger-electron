@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import { FieldPacket, QueryResult } from "mysql2";
 import { Connection, createPool, Pool } from "mysql2/promise";
 import express, { Express, Request, Response } from "express";
+import * as http from "http";
+import { Server } from "socket.io";
 const cors = require("cors");
 //var mysql = require("mysql2");
 
@@ -17,6 +19,13 @@ const port = process.env.PORT || 3001;
 app.use(express.json());
 app.use(cors());
 
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
+
+io.on("connection", (socket) => {
+  socket.emit("update", "helloworld");
+  console.log("new connection!");
+});
 // Make connection just for the db. Shoukd be changed later
 
 var connection: Connection;
@@ -115,7 +124,7 @@ app.get(
   }
 );
 
-app.listen(port, () => {
+server.listen(port, () => {
   //connection.connect();
   console.log(`Backend server listening at http://localhost:${port}`);
 });
