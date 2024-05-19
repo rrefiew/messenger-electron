@@ -1,5 +1,5 @@
 export interface UserMessage {
-  id?: number;
+  id: number;
   text: string;
   sender_id: number;
   peer_id: number;
