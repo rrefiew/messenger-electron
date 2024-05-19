@@ -1,5 +1,6 @@
 import * as SharedTypes from "../../../shared_types/types";
 import * as React from "react";
+import io from "socket.io-client";
 
 export class Dialogue {
   peer_id: number;
@@ -16,8 +17,17 @@ export async function sendMessage(
   message: SharedTypes.UserMessage
 ): Promise<boolean> {
   try {
-    await fetch(
-      `${SiteLocation}/danger_zone/messages/send_message/sender_id/${message.sender_id}/peer_id/${message.peer_id}/text/${message.text}`
+    const response = await fetch(
+      `${SiteLocation}/danger_zone/messages/send_message/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          peer_id: message.peer_id,
+          sender_id: message.sender_id,
+          text: message.text,
+        }),
+      }
     );
   } catch (_e: any) {
     return false;
@@ -58,6 +68,18 @@ export function ChatMessage({
     </div>
   );
 }
+const socket = io(SiteLocation);
+socket.connect();
+
+setInterval(() => {
+  console.log("aaaa");
+  sendMessage({
+    id: 0,
+    peer_id: 100,
+    sender_id: 0,
+    text: "heyheyhey!",
+  });
+}, 5000);
 
 export function DialogueRoom() {
   if (current_dialogue === null) {
@@ -71,11 +93,23 @@ export function DialogueRoom() {
       </div>
     );
   }
+
   if (current_dialogue === null) {
     return <>Please select a dialogue</>;
   }
 
   const [messages, setMessages] = React.useState<SharedTypes.UserMessage[]>([]);
+
+  socket.on("update", (updatedData) => {
+    const fetchMessages = async () => {
+      console.log("socket on updated data fetch messages");
+      if (current_dialogue !== null) {
+        setMessages(await getLastMessages(+userId, current_dialogue, 15));
+      }
+    };
+
+    fetchMessages();
+  });
 
   React.useEffect(() => {
     const fetchMessages = async () => {
