@@ -79,16 +79,20 @@ export async function GetUserFromId(
 export async function GetDialogueMessages(
   sender_id: number,
   peer_id: number,
-  n: number
+  n: number,
+  connection: Connection
 ): Promise<SharedTypes.UserMessage[]> {
-  return [
-    {
-      id: 0,
-      text: "AAAAAYUAYAYAY",
-      sender_id: sender_id,
-      peer_id: peer_id,
-    },
-  ];
+  try {
+    // Might be a bug in here
+    let [results]: any = await connection.query(
+      `SELECT id, text, sender_id, peer_id FROM user_messages WHERE sender_id = ${sender_id} and peer_id = ${peer_id} ORDER BY sent_at ASC LIMIT ${n} `
+    );
+
+    return results;
+  } catch (_e: any) {
+    console.log(_e);
+    return Promise.reject(new BackendError(501, _e.message));
+  }
 }
 
 export async function GetUserIdFromName(

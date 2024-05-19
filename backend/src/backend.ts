@@ -105,11 +105,12 @@ app.get(
       const users = await Handlers.GetDialogueMessages(
         +req.params.sender_id,
         +req.params.peer_id,
-        +req.params.n
+        +req.params.n,
+        pool
       );
       res.status(201).send(users);
     } catch (_e: any) {
-      // res.status(501).send(_e);
+      res.status(502).send(_e);
     }
   }
 );
