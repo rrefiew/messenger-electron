@@ -10,27 +10,33 @@
 
     <div class="banner_left"><img src="banner_left.png" alt="banner_left"/></div>
     <div class="header_container">
-      <img src="./logo.png" class="logo">
-      <div class="return_to_registration"><a href="login.html"><p>Войти в другой аккаунт</p></div></a>
+      <img src="./logo.png">
+      <div class="return_to_registration"><a href="login.html"><p>Выйти</p></div></a>
     </div>
 
-    <div class="container">
-      <div class="text-left">
-        <h2>Укажите ваш ник и начинайте переписку</h2>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <h2>Форма сообщений</h2>
-          <h3>Сообщения</h3></div>
+    <div class="main">
+      <div class="chat_form_container">
+        <div class="chat_form_description">
+          <h2>Чаты</h2>
+          <h3>Сообщения</h3>   
+          </div>
           <form id="messForm">
+            <div class="form_form">
             <label for="username" class="username">Никнейм</label>
+            <div class="form_message">
+            <div class="form_message_otherus"><p class="message_otherus"></p></div>
+            <div class="form_message_us"><p class="message_us"></p></div>
+          </div>
+          </div>
             <input type="txt" name="username" id="username" value="">
-            <label for="message" class="message">Сообщение</label>
-            <textarea name="message" id="message" class="form-control" placeholder="Введите сообщение"></textarea> <br>
+
+            <textarea name="message" id="message" class="form-control" placeholder="Введите сообщение"></textarea>
             <input type="button" value="Отправить" class="btn-danger">
+          
+           
           </form>
+          </div>
         </div>
-    </div>
   </body>
   <script src="./renderer.js"></script>
 </html>
