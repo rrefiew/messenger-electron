@@ -86,7 +86,16 @@ export async function GetDialogueMessages(
   try {
     // Might be a bug in here
     let [results]: any = await connection.query(
-      `SELECT id, text, sender_id, peer_id FROM user_messages WHERE sender_id = ${sender_id} and peer_id = ${peer_id} ORDER BY sent_at ASC LIMIT ${n} `
+      `SELECT * FROM
+      ( 
+        SELECT id, text, sender_id, peer_id 
+        FROM user_messages 
+        WHERE (sender_id = ${sender_id} and peer_id = ${peer_id}) 
+        OR (sender_id = ${peer_id} and peer_id = ${sender_id}) 
+        ORDER BY sent_at DESC LIMIT ${n} 
+      ) AS sub 
+      ORDER BY id ASC
+      `
     );
 
     return results;

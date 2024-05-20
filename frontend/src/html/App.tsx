@@ -1,5 +1,10 @@
 import * as React from "react";
-import { DialogueRoom, handleOnClickSendingMessage } from "../ts/frontend";
+import {
+  DialogueRoom,
+  Dialogue,
+  handleOnClickSendingMessage,
+  handleNameOnEnterClickedPressedWtf,
+} from "../ts/frontend";
 import Kot from "./kot.png";
 import Logo from "./logo.png";
 import BannerLeft from "./banner_left.png";
@@ -7,9 +12,19 @@ import BannerLeft from "./banner_left.png";
 
 export default function MyApp() {
   const [message, setMessage] = React.useState("");
+  const [dialogue, setDialogue] = React.useState<Dialogue | null>(null);
 
   const handleInput = (event: any) => {
     setMessage(event.target.value);
+  };
+
+  const handleNameOnEnter = (event: any) => {
+    if (event.key === "Enter") {
+      setDialogue(new Dialogue(-1, event.target.value));
+      if (dialogue !== null) {
+        handleNameOnEnterClickedPressedWtf(dialogue);
+      }
+    }
   };
 
   return (
@@ -45,6 +60,7 @@ export default function MyApp() {
               type="txt" // Corrected from "txt" to "text"
               name="username"
               id="username"
+              onKeyDown={handleNameOnEnter}
             />
             <input
               name="message"
@@ -60,7 +76,9 @@ export default function MyApp() {
               className="btn-danger"
               onClick={() => {
                 setMessage("");
-                handleOnClickSendingMessage(message);
+                if (dialogue !== null) {
+                  handleOnClickSendingMessage(dialogue, message);
+                }
               }}
             />
           </form>

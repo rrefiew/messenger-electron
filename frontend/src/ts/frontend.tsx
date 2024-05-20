@@ -4,14 +4,16 @@ import { socket } from "./socket";
 
 export class Dialogue {
   peer_id: number;
-  constructor(peer: number) {
+  name?: string;
+  constructor(peer: number, name?: string) {
     this.peer_id = peer;
+    this.name = name;
   }
 }
 
 const SiteLocation = "http://localhost:3001";
 
-let current_dialogue: Dialogue | null = null;
+export let current_dialogue: Dialogue | null = null;
 
 export async function sendMessage(
   message: SharedTypes.UserMessage
@@ -55,8 +57,47 @@ async function getLastMessages(
   return [];
 }
 
-export function handleOnClickSendingMessage(text: string) {
+export function setNewDialogue(dialogue: Dialogue) {
+  if (!dialogue.name) {
+    return;
+  }
+
+  try {
+    const b = async () => {
+      let response = await fetch(
+        `${SiteLocation}/users/get_user_id_from_name/${dialogue.name}`
+      );
+
+      dialogue.peer_id = +(await response.json());
+      return dialogue;
+    };
+
+    b().then((aa) => {
+      current_dialogue = aa;
+    });
+  } catch (_e: any) {
+    console.log(_e);
+    return;
+  }
+}
+
+export function handleNameOnEnterClickedPressedWtf(dialogue: Dialogue) {
+  setNewDialogue(dialogue);
+
+  socket.emit("update", "hey :D");
+}
+
+export function handleOnClickSendingMessage(dialogue: Dialogue, text: string) {
   if (text.length === 0) {
+    return;
+  }
+  if (current_dialogue === null) {
+    return;
+  }
+
+  setNewDialogue(dialogue);
+
+  if (current_dialogue.peer_id === -1) {
     return;
   }
   const a = async () => {
@@ -83,21 +124,26 @@ export function handleOnClickSendingMessage(text: string) {
 export function ChatMessage({
   message_id,
   message_text,
+  was_sent_by_us,
 }: {
   message_id: number;
   message_text: string;
+  was_sent_by_us: boolean;
 }) {
+  let us_class_name = () => {
+    if (!was_sent_by_us) {
+      return "message_otherus".toString();
+    }
+    return "message_us".toString();
+  };
   return (
     <>
-      <p className="message_otherus">{message_text}</p>
+      <p className={us_class_name()}>{message_text}</p>
     </>
   );
 }
 
 export function DialogueRoom() {
-  if (current_dialogue === null) {
-    current_dialogue = new Dialogue(100);
-  }
   const userId = window.localStorage.getItem("userid");
   if (userId === null) {
     return (
@@ -134,16 +180,27 @@ export function DialogueRoom() {
     };
   }, [userId, current_dialogue]); // Dependencies: re-run effect if these values change
 
+  const us_class_name = (was_sent_by_us: boolean) => {
+    if (!was_sent_by_us) {
+      return "form_message_otherus".toString();
+    }
+    return "form_message_us".toString();
+  };
+
   return (
-    <div className="form_message_otherus">
+    <>
       {messages &&
         messages.map((msg) => (
-          <ChatMessage
-            key={msg.id}
-            message_id={msg.id}
-            message_text={msg.text}
-          ></ChatMessage>
+          //is_us: boolean = ;
+          <div className={us_class_name(+userId === msg.sender_id)}>
+            <ChatMessage
+              key={msg.id}
+              message_id={msg.id}
+              message_text={msg.text}
+              was_sent_by_us={+userId === msg.sender_id}
+            ></ChatMessage>
+          </div>
         ))}
-    </div>
+    </>
   );
 }
