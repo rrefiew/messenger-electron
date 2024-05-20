@@ -4,13 +4,14 @@ import {
   Dialogue,
   handleOnClickSendingMessage,
   handleNameOnEnterClickedPressedWtf,
+  Register,
 } from "../ts/frontend";
-import Kot from "./kot.png";
+
 import Logo from "./logo.png";
 import BannerLeft from "./banner_left.png";
 //<input type="button" value="Отправить" className="btn-danger" />
 
-export default function MyApp() {
+export function AB() {
   const [message, setMessage] = React.useState("");
   const [dialogue, setDialogue] = React.useState<Dialogue | null>(null);
 
@@ -85,5 +86,11 @@ export default function MyApp() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function MyApp() {
+  return (
+    <> {!window.localStorage.getItem("userid") ? <AB /> : <Register />} </>
   );
 }

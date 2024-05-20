@@ -1,6 +1,8 @@
 import * as SharedTypes from "../../../shared_types/types";
 import * as React from "react";
+import { redirectDocument, redirect, Link } from "react-router-dom";
 import { socket } from "./socket";
+import Kot from "../html/kot.png";
 
 export class Dialogue {
   peer_id: number;
@@ -119,6 +121,49 @@ export function handleOnClickSendingMessage(dialogue: Dialogue, text: string) {
   };
 
   a();
+}
+
+export function Register() {
+  return (
+    <>
+      <a href="../../public/login.html">Go to Login</a>
+    </>
+  );
+  return (
+    <div className="loginFormContainer">
+      <div className="loginFormTitle">
+        <h1>Добро пожаловать в Nesil!</h1>
+      </div>
+      <div className="loginFormDescription">
+        <h3>
+          Пожалуйста, пройди регистрацию или войди в уже существующий аккаунт
+        </h3>
+      </div>
+      <form id="loginForm">
+        <label htmlFor="username">Никнейм:</label>
+        <input type="text" id="username" name="username" required />
+        <br />
+        <label htmlFor="password">Пароль:</label>
+        <input type="password" id="password" name="password" required />
+        <br />
+        <br />
+        <div className="entry_container">
+          <input
+            type="button"
+            id="submButtonRegistr"
+            value="Зарегистрироваться"
+          />
+          <p className="login button">
+            Уже есть аккаунт?
+            <input type="button" id="submButtonEntry" value="Войти" />
+          </p>
+        </div>
+        <div className="loginFormKot">
+          <img src={Kot} />
+        </div>
+      </form>
+    </div>
+  );
 }
 
 export function ChatMessage({
