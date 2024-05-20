@@ -122,13 +122,18 @@ app.post(
     if (!MessageData.hasOwnProperty("text")) {
       res.status(400).send("Json must have text in it");
     }
-    Handlers.PostSendMessage(
-      MessageData.sender_id,
-      MessageData.peer_id,
-      MessageData.text,
-      pool
-    );
-    res.status(201).send("User was created");
+    try {
+      Handlers.PostSendMessage(
+        MessageData.sender_id,
+        MessageData.peer_id,
+        MessageData.text,
+        pool
+      );
+      res.status(201).send("User was created");
+      io.emit("update", "data updated!");
+    } catch (_e: any) {
+      res.status(501).send(_e);
+    }
   }
 );
 
