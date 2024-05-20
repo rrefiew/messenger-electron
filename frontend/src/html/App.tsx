@@ -1,61 +1,69 @@
 import * as React from "react";
-import { DialogueRoom } from "../ts/frontend";
+import { DialogueRoom, handleOnClickSendingMessage } from "../ts/frontend";
+import Kot from "./kot.png";
+import Logo from "./logo.png";
+import BannerLeft from "./banner_left.png";
+//<input type="button" value="Отправить" className="btn-danger" />
 
-function leftBanner() {
+export default function MyApp() {
+  const [message, setMessage] = React.useState("");
+
+  const handleInput = (event: any) => {
+    setMessage(event.target.value);
+  };
+
   return (
     <>
       <div className="banner_left">
-        <img src="banner_left.png" alt="banner_left" />
+        <img src={BannerLeft} alt="banner_left" />
       </div>
       <div className="header_container">
-        <img src="./logo.png" className="logo" />
+        <img src={Logo} alt="Logo" />
         <div className="return_to_registration">
           <a href="login.html">
-            <p>Войти в другой аккаунт</p>
+            <p>Выйти</p>
           </a>
         </div>
       </div>
-    </>
-  );
-}
-//<input type="button" value="Отправить" className="btn-danger" />
-export default function MyApp() {
-  return (
-    <>
-      <div className="container">
-        <div className="ActualPage">
-          <div className="Dialogues">
-            <h3>Диалоги</h3>
 
-            <form id="messForm">
-              <label htmlFor="username" className="username"></label>
-              <input
-                type="text"
-                placeholder="Введите имя..."
-                name="username"
-                id="username"
-                value=""
-              />
-            </form>
+      <div className="main">
+        <div className="chat_form_container">
+          <div className="chat_form_description">
+            <h2>Чаты</h2>
+            <h3>Сообщения</h3>
           </div>
-          <div className="Messages">
-            <label htmlFor="messageBox" className="username"></label>
-            <div className="messageTextBox">
-              <input
-                type="text"
-                placeholder="Введите Сообщение..."
-                name="messageBox"
-                id="messageBox"
-                value=""
-              />
-              <input
-                className="MessageButton"
-                type="button"
-                value="Send"
-                onClick={() => console.log("Sent...")}
-              ></input>
+          <form id="messForm">
+            <div className="form_form">
+              <label htmlFor="username" className="username">
+                Никнейм
+              </label>
+              <div className="form_message">
+                <DialogueRoom />
+              </div>
             </div>
-          </div>
+            <input
+              type="txt" // Corrected from "txt" to "text"
+              name="username"
+              id="username"
+            />
+            <input
+              name="message"
+              id="message"
+              className="form-control"
+              placeholder="Введите сообщение"
+              onChange={handleInput}
+              value={message}
+            ></input>
+            <input
+              type="button" // Changed from "button" to "submit" for form submission
+              value="Отправить"
+              className="btn-danger"
+              onClick={() => {
+                setMessage("");
+                handleOnClickSendingMessage(message);
+              }}
+            />
+          </form>
         </div>
       </div>
     </>

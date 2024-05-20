@@ -1,6 +1,6 @@
 import * as SharedTypes from "../../../shared_types/types";
 import * as React from "react";
-import io from "socket.io-client";
+import { socket } from "./socket";
 
 export class Dialogue {
   peer_id: number;
@@ -55,6 +55,31 @@ async function getLastMessages(
   return [];
 }
 
+export function handleOnClickSendingMessage(text: string) {
+  if (text.length === 0) {
+    return;
+  }
+  const a = async () => {
+    const userId = window.localStorage.getItem("userid");
+    if (userId === null) {
+      return;
+    }
+
+    if (current_dialogue === null) {
+      return;
+    }
+
+    await sendMessage({
+      id: 0,
+      sender_id: +userId,
+      peer_id: current_dialogue.peer_id,
+      text: text,
+    });
+  };
+
+  a();
+}
+
 export function ChatMessage({
   message_id,
   message_text,
@@ -63,13 +88,11 @@ export function ChatMessage({
   message_text: string;
 }) {
   return (
-    <div>
-      <p>{message_text}</p>
-    </div>
+    <>
+      <p className="message_otherus">{message_text}</p>
+    </>
   );
 }
-const socket = io(SiteLocation);
-socket.connect();
 
 export function DialogueRoom() {
   if (current_dialogue === null) {
@@ -90,30 +113,29 @@ export function DialogueRoom() {
 
   const [messages, setMessages] = React.useState<SharedTypes.UserMessage[]>([]);
 
-  socket.on("update", (updatedData) => {
-    const fetchMessages = async () => {
-      console.log("socket on updated data fetch messages");
-      if (current_dialogue !== null) {
-        setMessages(await getLastMessages(+userId, current_dialogue, 15));
-      }
-    };
-
-    fetchMessages();
-  });
-
   React.useEffect(() => {
     const fetchMessages = async () => {
       console.log("fetchmessages");
       if (current_dialogue !== null) {
-        setMessages(await getLastMessages(+userId, current_dialogue, 15));
+        setMessages(await getLastMessages(+userId, current_dialogue, 10));
       }
     };
 
-    fetchMessages(); // Call the async function
+    const handler = (updatedData: any) => {
+      console.log("socket on updated data fetch messages");
+      fetchMessages();
+    };
+
+    socket.on("update", handler);
+    fetchMessages();
+    //fetchMessages(); // Call the async function
+    return () => {
+      socket.off("update", handler);
+    };
   }, [userId, current_dialogue]); // Dependencies: re-run effect if these values change
 
   return (
-    <div>
+    <div className="form_message_otherus">
       {messages &&
         messages.map((msg) => (
           <ChatMessage
