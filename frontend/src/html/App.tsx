@@ -11,13 +11,62 @@ import Logo from "./logo.png";
 import BannerLeft from "./banner_left.png";
 //<input type="button" value="Отправить" className="btn-danger" />
 
-export function AB() {
-  const [message, setMessage] = React.useState("");
-  const [dialogue, setDialogue] = React.useState<Dialogue | null>(null);
+export function MessForm() {
+  return (
+    <form id="messForm">
+      <div className="form_form">
+        <label htmlFor="username" className="username">
+          Никнейм
+        </label>
+        <div className="form_message">
+          <DialogueRoom />
+        </div>
+      </div>
+    </form>
+  );
+}
 
+export function SendMessage({
+  currentDialogue,
+}: {
+  currentDialogue: Dialogue | null;
+}) {
+  const dialogue = currentDialogue;
+  const [message, setMessage] = React.useState("");
   const handleInput = (event: any) => {
     setMessage(event.target.value);
   };
+
+  return (
+    <div className="send_message">
+      <textarea
+        name="message"
+        id="message"
+        className="form-control"
+        placeholder="Введите сообщение"
+        onChange={handleInput}
+        value={message}
+      ></textarea>
+      <br />
+      <br />
+      <br />
+      <input
+        type="button" // Changed from "button" to "submit" for form submission
+        value="Отправить"
+        className="btn-danger"
+        onClick={() => {
+          setMessage("");
+          if (dialogue !== null) {
+            handleOnClickSendingMessage(dialogue, message);
+          }
+        }}
+      />
+    </div>
+  );
+}
+
+export function AB() {
+  const [dialogue, setDialogue] = React.useState<Dialogue | null>(null);
 
   const handleNameOnEnter = (event: any) => {
     if (event.key === "Enter") {
@@ -30,9 +79,6 @@ export function AB() {
 
   return (
     <>
-      <div className="banner_left">
-        <img src={BannerLeft} alt="banner_left" />
-      </div>
       <div className="header_container">
         <img src={Logo} alt="Logo" />
         <div className="return_to_registration">
@@ -48,41 +94,15 @@ export function AB() {
             <h2>Чаты</h2>
             <h3>Сообщения</h3>
           </div>
-          <form id="messForm">
-            <div className="form_form">
-              <label htmlFor="username" className="username">
-                Никнейм
-              </label>
-              <div className="form_message">
-                <DialogueRoom />
-              </div>
-            </div>
-            <input
-              type="txt" // Corrected from "txt" to "text"
-              name="username"
-              id="username"
-              onKeyDown={handleNameOnEnter}
-            />
-            <input
-              name="message"
-              id="message"
-              className="form-control"
-              placeholder="Введите сообщение"
-              onChange={handleInput}
-              value={message}
-            ></input>
-            <input
-              type="button" // Changed from "button" to "submit" for form submission
-              value="Отправить"
-              className="btn-danger"
-              onClick={() => {
-                setMessage("");
-                if (dialogue !== null) {
-                  handleOnClickSendingMessage(dialogue, message);
-                }
-              }}
-            />
-          </form>
+
+          {dialogue ? (
+            <>
+              <MessForm />
+              <SendMessage currentDialogue={dialogue} />
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </>
@@ -90,7 +110,9 @@ export function AB() {
 }
 
 export default function MyApp() {
-  return (
-    <> {!window.localStorage.getItem("userid") ? <AB /> : <Register />} </>
+  return /*!window.localStorage.getItem("userid")*/ true ? (
+    <AB />
+  ) : (
+    <Register />
   );
 }
