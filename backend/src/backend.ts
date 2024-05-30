@@ -57,7 +57,11 @@ app.get(
         req.params.password,
         pool
       );
-      res.send(isCorrect);
+      if (isCorrect) {
+        res.status(200).send(isCorrect);
+      } else {
+        res.status(404).send(isCorrect);
+      }
     } catch (_e: any) {
       console.log(_e);
     }

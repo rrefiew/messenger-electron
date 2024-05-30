@@ -3,7 +3,7 @@ import { redirectDocument, redirect, Link } from "react-router-dom";
 import { socket } from "./socket";
 import Kot from "../html/kot.png";
 import { useState } from "react";
-import { HandleRegistration, HandleLogin } from "./registration";
+import { HandleRegistration } from "./registration";
 import { UseAuthUser } from "./contexts";
 
 import * as SharedTypes from "../../../shared_types/types";
@@ -115,6 +115,13 @@ function LoginForm() {
 }
 
 export function Register() {
+  let { LogInWithSecret } = UseAuthUser();
+
+  React.useEffect(() => {
+    const a = async () => await LogInWithSecret("");
+    a();
+  }, []);
+
   return (
     <div className="loginFormContainer">
       <div className="loginFormTitle">

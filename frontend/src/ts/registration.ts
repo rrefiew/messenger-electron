@@ -23,7 +23,7 @@ async function insertNewUserIntoDatabase(
   }
 }
 
-async function getFirstUserIdFromName(username: string) {
+export async function getFirstUserIdFromName(username: string) {
   try {
     const response = await fetch(
       `${SiteLocation}/users/get_user_id_from_name/${username}`
@@ -41,7 +41,7 @@ async function getFirstUserIdFromName(username: string) {
   }
 }
 
-async function checkIfPasswordIsCorrect(
+export async function checkIfPasswordIsCorrect(
   user_id: number,
   password: string
 ): Promise<boolean> {
@@ -49,7 +49,6 @@ async function checkIfPasswordIsCorrect(
     const response = await fetch(
       `${SiteLocation}/danger_zone/users/get_is_user_password_correct/id/${user_id}/password/${password}`
     );
-
     return response.ok;
   } catch (error) {
     console.log(error);
@@ -57,36 +56,7 @@ async function checkIfPasswordIsCorrect(
   }
 }
 
-export function HandleLogin(username: string, password: string): boolean {
-  if (username === "" || password === "") {
-    return false;
-  }
-  // THIS WORKS
-  getFirstUserIdFromName(username).then(async (user_id) => {
-    if (user_id == null) {
-      console.log(
-        "TODO: Add implementation for kickcing user because he has no name"
-      );
-      return;
-    }
-
-    if (!(await checkIfPasswordIsCorrect(user_id, password))) {
-      console.log("Neverniy parol");
-      return false;
-    }
-
-    try {
-      window.localStorage.setItem(
-        "userid",
-        await getFirstUserIdFromName(username)
-      );
-    } catch (_e) {
-      console.log("Could not create localstorage! We cannot procceed");
-      return false;
-    }
-  });
-  return true;
-}
+//export function HandleLogin(username: string, password: string): boolean {}
 
 export async function HandleRegistration(username: string, password: string) {
   console.log("Tried to registrate!");
