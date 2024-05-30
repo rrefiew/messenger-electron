@@ -3,7 +3,6 @@ import { redirectDocument, redirect, Link } from "react-router-dom";
 import { socket } from "./socket";
 import Kot from "../html/kot.png";
 import { useState } from "react";
-import { HandleRegistration } from "./registration";
 import { UseAuthUser } from "./contexts";
 
 import * as SharedTypes from "../../../shared_types/types";
@@ -65,7 +64,7 @@ async function getLastMessages(
 function LoginForm() {
   let [username, setUsername] = useState("");
   let [password, setPassword] = useState("");
-  let { LogIn } = UseAuthUser();
+  let { LogIn, SignIn, LogInWithSecret } = UseAuthUser();
 
   return (
     <form id="loginForm">
@@ -95,7 +94,10 @@ function LoginForm() {
           type="button"
           id="submButtonRegistr"
           value="Зарегистрироваться"
-          onClick={async () => await HandleRegistration(username, password)}
+          onClick={async () => {
+            await SignIn(username, password);
+            await LogInWithSecret("0");
+          }}
         />
         <p className="login button">
           Уже есть аккаунт?

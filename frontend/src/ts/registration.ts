@@ -1,6 +1,6 @@
 const SiteLocation = "http://localhost:3001";
 
-async function insertNewUserIntoDatabase(
+export async function insertNewUserIntoDatabase(
   new_user_username: string,
   new_user_password: string
 ) {
@@ -57,47 +57,3 @@ export async function checkIfPasswordIsCorrect(
 }
 
 //export function HandleLogin(username: string, password: string): boolean {}
-
-export async function HandleRegistration(username: string, password: string) {
-  console.log("Tried to registrate!");
-
-  // Получение значений полей формы
-  if (username === "" || password === "") {
-    return false;
-  }
-  try {
-    // добавить проверку на существование пользователя
-    try {
-      getFirstUserIdFromName(username).catch();
-      let userExists;
-      userExists = !!(await getFirstUserIdFromName(username));
-      console.log(userExists);
-      if (userExists) {
-        return false;
-      }
-    } catch (_e) {
-      console.log(_e);
-      return false;
-    }
-
-    console.log("userExists");
-
-    let response = await insertNewUserIntoDatabase(username, password);
-    if (!response) {
-      return false;
-    }
-
-    try {
-      window.localStorage.setItem(
-        "userid",
-        await getFirstUserIdFromName(username)
-      );
-      return true;
-    } catch (_e) {
-      console.log("Could not create localstorage! We cannot procceed");
-      return false;
-    }
-  } catch (_e) {
-    return false;
-  }
-}

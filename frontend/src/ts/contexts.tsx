@@ -14,6 +14,7 @@ import { setSyntheticTrailingComments } from "typescript";
 import {
   checkIfPasswordIsCorrect,
   getFirstUserIdFromName,
+  insertNewUserIntoDatabase,
 } from "./registration";
 
 interface UserProps {
@@ -88,8 +89,47 @@ export const AuthProvider: FC<UserAuthProvider> = memo(({ children }) => {
   }
 
   async function SignIn(username: string, password: string) {
-    console.log("SignIn");
-    return 3;
+    console.log("Tried to registrate!");
+
+    // Получение значений полей формы
+    if (username === "" || password === "") {
+      return false;
+    }
+    try {
+      // добавить проверку на существование пользователя
+      try {
+        getFirstUserIdFromName(username).catch();
+        let userExists;
+        userExists = !!(await getFirstUserIdFromName(username));
+        console.log(userExists);
+        if (userExists) {
+          return false;
+        }
+      } catch (_e) {
+        console.log(_e);
+        return false;
+      }
+
+      console.log("userExists");
+
+      let response = await insertNewUserIntoDatabase(username, password);
+      if (!response) {
+        return false;
+      }
+
+      try {
+        window.localStorage.setItem(
+          "userid",
+          await getFirstUserIdFromName(username)
+        );
+        return window.localStorage.getitem("userid");
+      } catch (_e) {
+        console.log("Could not create localstorage! We cannot procceed");
+        return null;
+      }
+    } catch (_e) {
+      return null;
+    }
   }
 
   return (
