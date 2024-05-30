@@ -10,7 +10,7 @@ import {
 import Logo from "./logo.png";
 import BannerLeft from "./banner_left.png";
 import { useEffect, useState } from "react";
-import { IsLoggedInContext } from "../ts/contexts";
+import { AuthProvider, UseAuthUser } from "../ts/contexts";
 //<input type="button" value="Отправить" className="btn-danger" />
 
 export function MessForm() {
@@ -71,6 +71,7 @@ export function SendMessage({
 
 export function AB() {
   const [dialogue, setDialogue] = React.useState<Dialogue | null>(null);
+  let { LogOut } = UseAuthUser();
 
   const handleNameOnEnter = (event: any) => {
     if (event.key === "Enter") {
@@ -86,7 +87,11 @@ export function AB() {
       <div className="header_container">
         <img src={Logo} alt="Logo" />
         <div className="return_to_registration">
-          <a href="login.html">
+          <a
+            onClick={async () => {
+              await LogOut();
+            }}
+          >
             <p>Выйти</p>
           </a>
         </div>
@@ -113,11 +118,17 @@ export function AB() {
   );
 }
 
+export function Main() {
+  let { LogOut, LogIn, isLoggedIn, User } = UseAuthUser();
+
+  console.log(User);
+  return isLoggedIn ? <AB /> : <Register />;
+}
+
 export default function MyApp() {
   return (
-    <IsLoggedInContext.Provider value={false}>
-      <AB />
-      <Register />
-    </IsLoggedInContext.Provider>
+    <AuthProvider>
+      <Main />
+    </AuthProvider>
   );
 }

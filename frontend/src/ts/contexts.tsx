@@ -10,19 +10,16 @@ import {
 } from "react";
 
 import { User } from "../../../shared_types/types";
+import { setSyntheticTrailingComments } from "typescript";
 
 interface UserProps {
   User: User | null;
   isLoggedIn: boolean;
   LogIn: (username: string, password: string) => Promise<number>;
-  LogOut: (username: string, password: string) => Promise<boolean>;
+  LogOut: () => Promise<boolean>;
   SignIn: (username: string, password: string) => Promise<number>;
 }
-//@ts-ignore
-export const UserPropsContext = createContext<UserProps>({
-  User: null,
-  isLoggedIn: false,
-});
+export const UserPropsContext = createContext<UserProps>({} as UserProps);
 
 interface UserAuthProvider {
   children: ReactNode;
@@ -30,14 +27,18 @@ interface UserAuthProvider {
 
 export const AuthProvider: FC<UserAuthProvider> = memo(({ children }) => {
   const [User, setLoggedInUser] = useState<User | null>(null);
-  const isLoggedIn = true;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   async function LogIn(username: string, password: string) {
-    console.log("LogIn");
+    setLoggedInUser({ id: 0, username: username, password: password });
+    setIsLoggedIn(true);
+    console.log("LoggedInUser", User);
     return 1;
   }
-  async function LogOut(username: string, password: string) {
+  async function LogOut() {
     console.log("LogOut");
+    setLoggedInUser(null);
+    setIsLoggedIn(false);
     return false;
   }
   async function SignIn(username: string, password: string) {

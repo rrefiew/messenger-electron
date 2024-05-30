@@ -5,7 +5,7 @@ import { socket } from "./socket";
 import Kot from "../html/kot.png";
 import { useState } from "react";
 import { HandleRegistration, HandleLogin } from "./registration";
-import { IsLoggedInContext } from "./contexts";
+import { UseAuthUser } from "./contexts";
 
 export class Dialogue {
   peer_id: number;
@@ -129,6 +129,7 @@ export function handleOnClickSendingMessage(dialogue: Dialogue, text: string) {
 function LoginForm() {
   let [username, setUsername] = useState("");
   let [password, setPassword] = useState("");
+  let { LogIn } = UseAuthUser();
 
   return (
     <form id="loginForm">
@@ -166,7 +167,7 @@ function LoginForm() {
             type="button"
             id="submButtonEntry"
             value="Войти"
-            onClick={async () => await HandleLogin(username, password)}
+            onClick={async () => await LogIn(username, password)}
           />
         </p>
       </div>
