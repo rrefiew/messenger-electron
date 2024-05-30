@@ -195,7 +195,7 @@ export function DialogueRoom() {
     return () => {
       socket.off("update", handler);
     };
-  }, [userId, dialogue, messages]); // Dependencies: re-run effect if these values change
+  }, [userId, dialogue]); // Dependencies: re-run effect if these values change
 
   const us_class_name = (was_sent_by_us: boolean) => {
     if (!was_sent_by_us) {
