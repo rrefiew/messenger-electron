@@ -3,6 +3,9 @@ import * as React from "react";
 import { redirectDocument, redirect, Link } from "react-router-dom";
 import { socket } from "./socket";
 import Kot from "../html/kot.png";
+import { useState } from "react";
+import { HandleRegistration, HandleLogin } from "./registration";
+import { IsLoggedInContext } from "./contexts";
 
 export class Dialogue {
   peer_id: number;
@@ -123,12 +126,58 @@ export function handleOnClickSendingMessage(dialogue: Dialogue, text: string) {
   a();
 }
 
-export function Register() {
+function LoginForm() {
+  let [username, setUsername] = useState("");
+  let [password, setPassword] = useState("");
+
   return (
-    <>
-      <a href="../../public/login.html">Go to Login</a>
-    </>
+    <form id="loginForm">
+      <label htmlFor="username">Никнейм:</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        onChange={(username) => setUsername(username.target.value)}
+        required
+      />
+      <br />
+      <label htmlFor="password">Пароль:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        onChange={(password) => {
+          setPassword(password.target.value);
+        }}
+      />
+      <br />
+      <br />
+      <div className="entry_container">
+        <input
+          type="button"
+          id="submButtonRegistr"
+          value="Зарегистрироваться"
+          onClick={async () => await HandleRegistration(username, password)}
+        />
+        <p className="login button">
+          Уже есть аккаунт?
+          <input
+            type="button"
+            id="submButtonEntry"
+            value="Войти"
+            onClick={async () => await HandleLogin(username, password)}
+          />
+        </p>
+      </div>
+      <div className="loginFormKot">
+        <img src={Kot} alt="Kot.png" />
+      </div>
+    </form>
   );
+}
+
+export function Register() {
   return (
     <div className="loginFormContainer">
       <div className="loginFormTitle">
@@ -139,29 +188,7 @@ export function Register() {
           Пожалуйста, пройди регистрацию или войди в уже существующий аккаунт
         </h3>
       </div>
-      <form id="loginForm">
-        <label htmlFor="username">Никнейм:</label>
-        <input type="text" id="username" name="username" required />
-        <br />
-        <label htmlFor="password">Пароль:</label>
-        <input type="password" id="password" name="password" required />
-        <br />
-        <br />
-        <div className="entry_container">
-          <input
-            type="button"
-            id="submButtonRegistr"
-            value="Зарегистрироваться"
-          />
-          <p className="login button">
-            Уже есть аккаунт?
-            <input type="button" id="submButtonEntry" value="Войти" />
-          </p>
-        </div>
-        <div className="loginFormKot">
-          <img src={Kot} />
-        </div>
-      </form>
+      <LoginForm></LoginForm>
     </div>
   );
 }

@@ -9,6 +9,8 @@ import {
 
 import Logo from "./logo.png";
 import BannerLeft from "./banner_left.png";
+import { useEffect, useState } from "react";
+import { IsLoggedInContext } from "../ts/contexts";
 //<input type="button" value="Отправить" className="btn-danger" />
 
 export function MessForm() {
@@ -36,6 +38,8 @@ export function SendMessage({
   const handleInput = (event: any) => {
     setMessage(event.target.value);
   };
+
+  useEffect(() => {}, [message]);
 
   return (
     <div className="send_message">
@@ -110,9 +114,10 @@ export function AB() {
 }
 
 export default function MyApp() {
-  return /*!window.localStorage.getItem("userid")*/ true ? (
-    <AB />
-  ) : (
-    <Register />
+  return (
+    <IsLoggedInContext.Provider value={false}>
+      <AB />
+      <Register />
+    </IsLoggedInContext.Provider>
   );
 }

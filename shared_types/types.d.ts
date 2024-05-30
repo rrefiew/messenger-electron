@@ -5,3 +5,9 @@ export interface UserMessage {
   peer_id: number;
   attachment_id?: number;
 }
+
+export interface User {
+  id: number;
+  username: string;
+  password: string;
+}
