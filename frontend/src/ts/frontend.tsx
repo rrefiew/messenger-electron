@@ -1,4 +1,3 @@
-import * as SharedTypes from "../../../shared_types/types";
 import * as React from "react";
 import { redirectDocument, redirect, Link } from "react-router-dom";
 import { socket } from "./socket";
@@ -6,6 +5,9 @@ import Kot from "../html/kot.png";
 import { useState } from "react";
 import { HandleRegistration, HandleLogin } from "./registration";
 import { UseAuthUser } from "./contexts";
+
+import * as SharedTypes from "../../../shared_types/types";
+import { useDialogue } from "./dialogue_context";
 
 export class Dialogue {
   peer_id: number;
@@ -17,8 +19,6 @@ export class Dialogue {
 }
 
 const SiteLocation = "http://localhost:3001";
-
-export let current_dialogue: Dialogue | null = null;
 
 export async function sendMessage(
   message: SharedTypes.UserMessage
@@ -60,70 +60,6 @@ async function getLastMessages(
     Promise.reject(new Error(`Something went wrong` + response));
   }
   return [];
-}
-
-export function setNewDialogue(dialogue: Dialogue) {
-  if (!dialogue.name) {
-    return;
-  }
-
-  try {
-    const b = async () => {
-      let response = await fetch(
-        `${SiteLocation}/users/get_user_id_from_name/${dialogue.name}`
-      );
-
-      dialogue.peer_id = +(await response.json());
-      return dialogue;
-    };
-
-    b().then((aa) => {
-      current_dialogue = aa;
-    });
-  } catch (_e: any) {
-    console.log(_e);
-    return;
-  }
-}
-
-export function handleNameOnEnterClickedPressedWtf(dialogue: Dialogue) {
-  setNewDialogue(dialogue);
-
-  socket.emit("update", "hey :D");
-}
-
-export function handleOnClickSendingMessage(dialogue: Dialogue, text: string) {
-  if (text.length === 0) {
-    return;
-  }
-  if (current_dialogue === null) {
-    return;
-  }
-
-  setNewDialogue(dialogue);
-
-  if (current_dialogue.peer_id === -1) {
-    return;
-  }
-  const a = async () => {
-    const userId = window.localStorage.getItem("userid");
-    if (userId === null) {
-      return;
-    }
-
-    if (current_dialogue === null) {
-      return;
-    }
-
-    await sendMessage({
-      id: 0,
-      sender_id: +userId,
-      peer_id: current_dialogue.peer_id,
-      text: text,
-    });
-  };
-
-  a();
 }
 
 function LoginForm() {
@@ -218,6 +154,9 @@ export function ChatMessage({
 
 export function DialogueRoom() {
   const userId = window.localStorage.getItem("userid");
+
+  let { dialogue } = useDialogue();
+
   if (userId === null) {
     return (
       <div>
@@ -226,17 +165,13 @@ export function DialogueRoom() {
     );
   }
 
-  if (current_dialogue === null) {
-    return <>Please select a dialogue</>;
-  }
-
   const [messages, setMessages] = React.useState<SharedTypes.UserMessage[]>([]);
 
   React.useEffect(() => {
     const fetchMessages = async () => {
       console.log("fetchmessages");
-      if (current_dialogue !== null) {
-        setMessages(await getLastMessages(+userId, current_dialogue, 10));
+      if (dialogue !== null) {
+        setMessages(await getLastMessages(+userId, dialogue, 10));
       }
     };
 
@@ -251,7 +186,7 @@ export function DialogueRoom() {
     return () => {
       socket.off("update", handler);
     };
-  }, [userId, current_dialogue]); // Dependencies: re-run effect if these values change
+  }, [userId]); // Dependencies: re-run effect if these values change
 
   const us_class_name = (was_sent_by_us: boolean) => {
     if (!was_sent_by_us) {
