@@ -27,11 +27,15 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron/fuses": "^1.8.0",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
     "electron": "^30.0.1"
   },
   "dependencies": {
     "crypto": "^1.0.1",
     "electron-squirrel-startup": "^1.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sha.js": "^2.4.11"
   }
 }

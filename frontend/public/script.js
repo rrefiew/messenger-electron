@@ -50,11 +50,10 @@ async function getFirstUserIdFromName(username) {
     const response = await fetch(
       `${SiteLocation}/users/get_user_id_from_name/${username}`
     );
-    const user_id_json = await response.json();
-    if (user_id_json.length > 0) {
-      return user_id_json[0].id;
+    if (response.status === 201) {
+      return await response.json();
     } else {
-      throw new Error("User ID not found");
+      return null;
     }
   } catch (error) {
     console.log(error);
@@ -78,35 +77,48 @@ async function checkIfPasswordIsCorrect(user_id, password) {
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("submButtonEntry")
-    .addEventListener("click", function (event) {
+    .addEventListener("click", async function (event) {
       let username = document.getElementById("username").value;
       let password = document.getElementById("password").value;
       if (username === "" || password === "") {
         return;
       }
       // THIS WORKS
-      getFirstUserIdFromName(username).then((user_id) => {
+      getFirstUserIdFromName(username).then(async (user_id) => {
         if (user_id == null) {
           console.log(
             "TODO: Add implementation for kickcing user because he has no name"
           );
           return;
         }
-        checkIfPasswordIsCorrect(user_id, password).then((isCorrect) => {
-          if (!isCorrect) {
-            console.log("Neverniy parol");
-          } else {
-            window.location.href = "index.html";
-          }
-        });
+        let isPasswordCorrect = await checkIfPasswordIsCorrect(
+          user_id,
+          password
+        );
+
+        try {
+          window.localStorage.setItem(
+            "userid",
+            await getFirstUserIdFromName(username)
+          );
+        } catch (_e) {
+          console.log("Could not create localstorage! We cannot procceed");
+          return;
+        }
       });
+
+      if (!isCorrect) {
+        console.log("Neverniy parol");
+      } else {
+        window.location.href = "index.html";
+      }
     });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("submButtonRegistr")
-    .addEventListener("click", function (event) {
+    .addEventListener("click", async function (event) {
       console.log("Tried to registrate!");
 
       // Получение значений полей формы
@@ -117,29 +129,35 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // добавить проверку на существование пользователя
-      insertNewUserIntoDatabase(username, password).then((response) => {
-        console.log("New user created " + response);
-        if (response) {
-          window.location.href = "index.html";
+      try {
+        let userExists;
+        userExists = !!(await getFirstUserIdFromName(username));
+        console.log(userExists);
+        if (userExists) {
+          return;
         }
-      });
-
-      // TODO: Add Insert
-      return;
-      let user = getCookie(`${username}`);
-
-      // Проверка наличия cookie с именем пользователя
-      if (user != "") {
-        alert("Welcome again " + user);
-      } else {
-        user = `${username}`;
-        if (user != "" && user != null) {
-          setCookie("username", user, 30); // Исправлено время жизни cookie
-        }
+      } catch (_e) {
+        console.log(_e);
+        return;
       }
-      // Если аккаунт не существует, устана��ливаем cookie и продолжаем отправку формы
-      setCookie(username, "registered", 365); // Устанавливаем cookie на 365 дней
-      // После успешной отправки формы перенаправляем пользователя
+
+      console.log("userExists");
+      let response = await insertNewUserIntoDatabase(username, password);
+
+      if (!response) {
+        return;
+      }
+
+      try {
+        window.localStorage.setItem(
+          "userid",
+          await getFirstUserIdFromName(username)
+        );
+      } catch (_e) {
+        console.log("Could not create localstorage! We cannot procceed");
+        return;
+      }
+
       window.location.href = "index.html";
     });
 });

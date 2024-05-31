@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import { FieldPacket, QueryResult } from "mysql2";
 import { Connection, createPool, Pool } from "mysql2/promise";
 import express, { Express, Request, Response } from "express";
+import * as http from "http";
+import { Server } from "socket.io";
+const cors = require("cors");
 //var mysql = require("mysql2");
 
 import * as Handlers from "./handlers/handlers";
@@ -11,10 +14,17 @@ import * as Handlers from "./handlers/handlers";
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(express.json());
+app.use(cors());
 
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
+
+io.on("connection", (socket) => {
+  console.log("new connection!");
+});
 // Make connection just for the db. Shoukd be changed later
 
 var connection: Connection;
@@ -47,7 +57,11 @@ app.get(
         req.params.password,
         pool
       );
-      res.send(isCorrect);
+      if (isCorrect) {
+        res.status(200).send(isCorrect);
+      } else {
+        res.status(404).send(isCorrect);
+      }
     } catch (_e: any) {
       console.log(_e);
     }
@@ -92,11 +106,59 @@ app.get("/users/get_user_id_from_name/:username", async (req, res) => {
     const id = await Handlers.GetUserIdFromName(req.params.username, pool);
     res.status(201).send(id.toString());
   } catch (_e: any) {
-    console.log(_e);
+    res.status(501).send("Corresponding user was not found");
   }
 });
 
-app.listen(port, () => {
+app.post(
+  "/danger_zone/messages/send_message/",
+  (req: Request, res: Response) => {
+    if (req.headers["content-type"] !== "application/json") {
+      res.status(400).send("Send valid Json");
+    }
+    const MessageData = req.body;
+    if (!MessageData.hasOwnProperty("sender_id")) {
+      res.status(400).send("Json must sender_id in it");
+    }
+    if (!MessageData.hasOwnProperty("peer_id")) {
+      res.status(400).send("Json must peer_id in it");
+    }
+    if (!MessageData.hasOwnProperty("text")) {
+      res.status(400).send("Json must have text in it");
+    }
+    try {
+      Handlers.PostSendMessage(
+        MessageData.sender_id,
+        MessageData.peer_id,
+        MessageData.text,
+        pool
+      );
+      res.status(201).send("User was created");
+      io.emit("update", "data updated!");
+    } catch (_e: any) {
+      res.status(501).send(_e);
+    }
+  }
+);
+
+app.get(
+  "/danger_zone/messages/get_messages/sender_id/:sender_id/peer_id/:peer_id/number_of_messages/:n",
+  async (req, res) => {
+    try {
+      const users = await Handlers.GetDialogueMessages(
+        +req.params.sender_id,
+        +req.params.peer_id,
+        +req.params.n,
+        pool
+      );
+      res.status(201).send(users);
+    } catch (_e: any) {
+      res.status(502).send(_e);
+    }
+  }
+);
+
+server.listen(port, () => {
   //connection.connect();
   console.log(`Backend server listening at http://localhost:${port}`);
 });
