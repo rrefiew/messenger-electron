@@ -19,8 +19,9 @@ const createWindow = () => {
     },
   });
   win.maximize();
+  win.loadURL("http://localhost:3000");
   win.webContents.openDevTools();
-  win.loadFile("login.html");
+  //win.loadFile("login.html");
 };
 
 //вызов функции, когда приложение готово к работе

@@ -1,6 +1,8 @@
 import { Connection, FieldPacket, QueryResult } from "mysql2/promise";
 var sha = require("sha.js");
 const crypto = require("crypto");
+import * as SharedTypes from "../../../shared_types/types";
+
 import { Query } from "mysql2/typings/mysql/lib/protocol/sequences/Query";
 
 function generateSalt(): string {
@@ -73,6 +75,52 @@ export async function GetUserFromId(
   }
 
   return resultUser;
+}
+
+export async function GetDialogueMessages(
+  sender_id: number,
+  peer_id: number,
+  n: number,
+  connection: Connection
+): Promise<SharedTypes.UserMessage[]> {
+  try {
+    // Might be a bug in here
+    let [results]: any = await connection.query(
+      `SELECT * FROM
+      ( 
+        SELECT id, text, sender_id, peer_id 
+        FROM user_messages 
+        WHERE (sender_id = ${sender_id} and peer_id = ${peer_id}) 
+        OR (sender_id = ${peer_id} and peer_id = ${sender_id}) 
+        ORDER BY sent_at DESC LIMIT ${n} 
+      ) AS sub 
+      ORDER BY id ASC
+      `
+    );
+
+    return results;
+  } catch (_e: any) {
+    console.log(_e);
+    return Promise.reject(new BackendError(501, _e.message));
+  }
+}
+
+export async function PostSendMessage(
+  sender_id: number,
+  peer_id: number,
+  text: string,
+  connection: Connection
+) {
+  try {
+    await connection.query(
+      `INSERT INTO user_messages (text, attachment_id, sender_id, peer_id, sent_at) VALUES ("${text}", ${0}, ${sender_id}, ${peer_id}, "${new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ")}")`
+    );
+  } catch (_e: any) {
+    return Promise.reject(new BackendError(501, _e.message));
+  }
 }
 
 export async function GetUserIdFromName(
