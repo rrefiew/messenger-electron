@@ -179,15 +179,11 @@ input[type="txt"] {
 
 .form_form {
   display: flex;
-  justify-content: center;
-  position: fixed;
-  left: 50%;
-  width: 50%;
-  margin-bottom: 20%;
-  overflow: hidden;
-  margin-left: 0.5vh;
-  margin-right: vh;
-  height: 100%;
+    justify-content: center;
+    width: 50%;
+    margin-bottom: 9%;
+    overflow-y: auto;
+    max-height: 200vh;
 }
 
 .form_message {
@@ -246,24 +242,23 @@ input[type="txt"] {
 #nick {
   width: 90%;
 }
-
 .chatForm {
   width: 50%;
   height: 80%;
   display: flex;
-  max-height: 50%;
+  max-height: 67vh;
   flex-wrap: wrap;
   gap: 2vh;
-  overflow: scroll;
+  overflow-y: auto;
 }
 .chatBox {
   border: solid rgb(6 6 6) 3px;
   border-radius: 5px;
   color: #000000;
-  height: 10%;
+  height: auto;
   padding: 5px;
   overflow-wrap: break-word;
-  overflow: hidden;
+  overflow-x: hidden;
   height: auto;
   width: 90%;
   margin-left: 3vh;
@@ -276,10 +271,10 @@ input[type="txt"] {
 
 .chatLastmess {
   margin-left: 5vh;
-}
-
-.chatBox2 {
-  max-height: 50%;
+    max-width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .nickSearch {
