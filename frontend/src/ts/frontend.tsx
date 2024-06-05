@@ -2,11 +2,12 @@ import * as React from "react";
 import { redirectDocument, redirect, Link } from "react-router-dom";
 import { socket } from "./socket";
 import Kot from "../html/kot.png";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { UseAuthUser } from "./contexts";
 
 import * as SharedTypes from "../../../shared_types/types";
 import { useDialogue } from "./dialogue_context";
+import { MessForm } from "../html/App";
 
 export class Dialogue {
   peer_id: number;
@@ -85,6 +86,7 @@ function LoginForm() {
         required
         onChange={(password) => {
           setPassword(password.target.value);
+          //Change this maybe?
         }}
       />
       <br />
@@ -154,6 +156,7 @@ export function ChatMessage({
     }
     return "message_us".toString();
   };
+
   return (
     <>
       <p className={us_class_name()}>{message_text}</p>
@@ -188,9 +191,9 @@ export function DialogueRoom() {
       console.log("socket on updated data fetch messages");
       fetchMessages();
     };
-
     socket.on("update", handler);
     fetchMessages();
+
     //fetchMessages(); // Call the async function
     return () => {
       socket.off("update", handler);
@@ -242,18 +245,39 @@ export function Chat({
 }
 
 export function NickSearch() {
+  const { SelectDialogue } = useDialogue();
+  //const [dialogue, setDialogue] = React.useState<Dialogue | null>(null);
+  const [peerName, setPeerName] = React.useState<string>("");
+  let isActive = useRef(false);
+
   return (
-    <div className="nickSearch">
+    <div className="nickSearch" style={{ zIndex: 1 }}>
       <textarea
         name="nick"
         id="nick"
         className="nickSearch_container"
         placeholder="Введите никнейм"
+        onChange={(event) => setPeerName(event.target.value)}
+        onFocus={() => {
+          isActive.current = true;
+        }}
+        onBlur={() => {
+          isActive.current = false;
+        }}
       ></textarea>
       <br />
       <br />
       <br />
-      <input type="button" value="Подтвердить" className="btn_nick" />
+      <input
+        type="button"
+        value="Подтвердить"
+        className="btn_nick"
+        onClick={async () => {
+          console.log(`the name was: ${peerName}`);
+          await SelectDialogue(peerName);
+          socket.emit("update", "hey :D");
+        }}
+      />
     </div>
   );
 }
@@ -263,15 +287,11 @@ export function Chats() {
     <div className="Chats">
       <form id="messForm">
         <div className="chatForm">
-          <NickSearch />
+          <Chat nickname="imdue" lastMessage="boo" />
         </div>
+        <MessForm />
       </form>
-      <div className="chatForm">
-        <Chat nickname="imdue" lastMessage="boo" />
-        <Chat nickname="imdue" lastMessage="boo" />{" "}
-        <Chat nickname="imdue" lastMessage="boo" />{" "}
-        <Chat nickname="imdue" lastMessage="boo" />{" "}
-      </div>
+      <NickSearch />
     </div>
   );
 }
