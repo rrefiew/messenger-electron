@@ -123,6 +123,41 @@ export async function PostSendMessage(
   }
 }
 
+export async function GetLatestMessagesid(
+  userId: number,
+  connection: Connection
+): Promise<[SharedTypes.UserMessage[], string[]]> {
+  let [response]: any = await connection.query(
+    `SELECT um.id, um.text, um.peer_id, ud.username AS "peer_username"
+FROM user_messages AS um
+JOIN (
+    SELECT MAX(id) AS max_id, peer_id
+    FROM user_messages
+    WHERE sender_id = ${userId}
+    GROUP BY peer_id
+) AS latest_um ON um.id = latest_um.max_id
+JOIN users_data AS ud ON ud.id = um.peer_id
+WHERE um.sender_id = 1011
+GROUP BY um.peer_id
+HAVING COUNT(um.peer_id) >= 1
+ORDER BY sent_at;`
+  );
+  let messages: SharedTypes.UserMessage[] = [];
+  let peer_names: string[] = [];
+
+  response.map((val: any) => {
+    messages.push({
+      id: val.id,
+      sender_id: userId,
+      text: val.text,
+      peer_id: val.peer_id,
+    });
+    peer_names.push(val.peer_username);
+  });
+
+  return [messages, peer_names];
+}
+
 export async function GetUserIdFromName(
   name: string,
   connection: Connection

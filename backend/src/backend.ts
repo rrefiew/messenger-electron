@@ -68,6 +68,21 @@ app.get(
   }
 );
 
+app.get(
+  "/danger_zone/messages/query_last_messages_sent_to_user/:id",
+  async (req, res) => {
+    try {
+      const [messages, names] = await Handlers.GetLatestMessagesid(
+        +req.params.id,
+        pool
+      );
+      res.status(200).send([messages, names]);
+    } catch (_e: any) {
+      res.status(404).send(_e);
+    }
+  }
+);
+
 app.post(
   "/danger_zone/users/insert_new_user_into_database/",
   (req: Request, res: Response) => {
