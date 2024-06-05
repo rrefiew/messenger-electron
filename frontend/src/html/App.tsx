@@ -158,6 +158,7 @@ function AB() {
             <h2>Чаты</h2>
             <h3>Сообщения</h3>
           </div>
+          <div className="line_vertical"></div>
           <div
             style={{
               display: "flex",
