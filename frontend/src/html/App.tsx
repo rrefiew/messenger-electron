@@ -1,5 +1,12 @@
 import * as React from "react";
-import { DialogueRoom, Dialogue, Register, sendMessage } from "../ts/frontend";
+import {
+  DialogueRoom,
+  Dialogue,
+  Register,
+  sendMessage,
+  VerticalLine,
+  Chats,
+} from "../ts/frontend";
 
 import Logo from "./logo.png";
 import BannerLeft from "./banner_left.png";
@@ -158,23 +165,24 @@ function AB() {
             <h2>Чаты</h2>
             <h3>Сообщения</h3>
           </div>
-          <div
+          {/* <div
             style={{
               display: "flex",
               width: "100vw",
               justifyContent: "space-around",
             }}
           >
-            <QueryUser />
-            {isDialogueActive ? (
-              <>
-                <MessForm />
-                <SendMessage />
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
+            <QueryUser /> */}
+          <Chats />
+          <VerticalLine />
+          {isDialogueActive ? (
+            <>
+              <MessForm />
+              <SendMessage />
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </>
