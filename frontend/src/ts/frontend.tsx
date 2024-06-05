@@ -260,8 +260,17 @@ export function Chat({
   nickname: string;
   lastMessage?: string;
 }) {
+  const { SelectDialogue } = useDialogue();
+  React.useEffect(() => {}, [lastMessage]);
   return (
-    <div className="chatBox">
+    <div
+      className="chatBox"
+      style={{ cursor: "pointer" }}
+      onClick={() => {
+        SelectDialogue(nickname);
+        socket.emit("update", "wow");
+      }}
+    >
       <p className="chatNick">{nickname}</p>
       <p className="chatLastmess">{lastMessage ?? "..."}</p>
     </div>
