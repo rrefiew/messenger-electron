@@ -221,3 +221,57 @@ export function DialogueRoom() {
     </>
   );
 }
+
+export function VerticalLine() {
+  return <div className="line_vertical"></div>;
+}
+
+export function Chat({
+  nickname,
+  lastMessage,
+}: {
+  nickname: string;
+  lastMessage?: string;
+}) {
+  return (
+    <div className="chatBox">
+      <p className="chatNick">{nickname}</p>
+      <p className="chatLastmess">{lastMessage ?? "..."}</p>
+    </div>
+  );
+}
+
+export function NickSearch() {
+  return (
+    <div className="nickSearch">
+      <textarea
+        name="nick"
+        id="nick"
+        className="nickSearch_container"
+        placeholder="Введите никнейм"
+      ></textarea>
+      <br />
+      <br />
+      <br />
+      <input type="button" value="Подтвердить" className="btn_nick" />
+    </div>
+  );
+}
+
+export function Chats() {
+  return (
+    <div className="Chats">
+      <form id="messForm">
+        <div className="chatForm">
+          <NickSearch />
+        </div>
+      </form>
+      <div className="chatForm">
+        <Chat nickname="imdue" lastMessage="boo" />
+        <Chat nickname="imdue" lastMessage="boo" />{" "}
+        <Chat nickname="imdue" lastMessage="boo" />{" "}
+        <Chat nickname="imdue" lastMessage="boo" />{" "}
+      </div>
+    </div>
+  );
+}
