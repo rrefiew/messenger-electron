@@ -135,15 +135,12 @@ export function SendMessage() {
 }
 
 function AB() {
-  const [dialogue, setDialogue] = React.useState<Dialogue | null>(null);
   let { LogOut } = UseAuthUser();
   let { isDialogueActive } = useDialogue();
+  useEffect(() => {
+    console.log(isDialogueActive);
+  }, [isDialogueActive]);
 
-  const handleNameOnEnter = (event: any) => {
-    if (event.key === "Enter") {
-      setDialogue(new Dialogue(-1, event.target.value));
-    }
-  };
   return (
     <>
       <div className="header_container">
@@ -177,7 +174,6 @@ function AB() {
           <VerticalLine />
           {isDialogueActive ? (
             <>
-              <MessForm />
               <SendMessage />
             </>
           ) : (
