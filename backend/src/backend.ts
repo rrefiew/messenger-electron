@@ -72,11 +72,8 @@ app.get(
   "/danger_zone/messages/query_last_messages_sent_to_user/:id",
   async (req, res) => {
     try {
-      const [messages, names] = await Handlers.GetLatestMessagesid(
-        +req.params.id,
-        pool
-      );
-      res.status(200).send([messages, names]);
+      const previews = await Handlers.GetLatestMessagesid(+req.params.id, pool);
+      res.status(200).send(previews);
     } catch (_e: any) {
       res.status(404).send(_e);
     }

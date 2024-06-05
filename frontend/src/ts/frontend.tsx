@@ -43,6 +43,30 @@ export async function sendMessage(
   return true;
 }
 
+async function getLastPreviews(
+  userId: number
+): Promise<SharedTypes.ChatPreview[]> {
+  if (userId === -1)
+    return Promise.reject(
+      new Error("Something went wrong! User was not logged in")
+    );
+  let response = await fetch(
+    `${SiteLocation}/danger_zone/messages/query_last_messages_sent_to_user/${userId}`
+  );
+  if (response.ok) {
+    try {
+      return await response.json();
+    } catch (_e) {
+      Promise.reject(new Error("Something went wrong" + response));
+    }
+  } else {
+    Promise.reject(new Error("Something went wrong" + response));
+  }
+  return Promise.reject(
+    new Error("Something went wrong! Could not fetch at getLastPreviews")
+  );
+}
+
 async function getLastMessages(
   user_id: number,
   dialogue: Dialogue,
@@ -283,11 +307,24 @@ export function NickSearch() {
 }
 
 export function Chats() {
+  const { User } = UseAuthUser();
+  const [previews, setPreviews] = useState<SharedTypes.ChatPreview[]>();
+
+  React.useEffect(() => {
+    getLastPreviews(User ? User.id : -1).then((value) => setPreviews(value));
+  }, []);
+
   return (
     <div className="Chats">
       <form id="messForm">
         <div className="chatForm">
-          <Chat nickname="imdue" lastMessage="boo" />
+          {previews &&
+            previews.map((preview) => (
+              <Chat
+                nickname={preview.peerName}
+                lastMessage={preview.message.text}
+              />
+            ))}
         </div>
         <MessForm />
       </form>

@@ -126,7 +126,7 @@ export async function PostSendMessage(
 export async function GetLatestMessagesid(
   userId: number,
   connection: Connection
-): Promise<[SharedTypes.UserMessage[], string[]]> {
+): Promise<SharedTypes.ChatPreview[]> {
   let [response]: any = await connection.query(
     `SELECT um.id, um.text, um.peer_id, ud.username AS "peer_username"
 FROM user_messages AS um
@@ -142,20 +142,21 @@ GROUP BY um.peer_id
 HAVING COUNT(um.peer_id) >= 1
 ORDER BY sent_at;`
   );
-  let messages: SharedTypes.UserMessage[] = [];
-  let peer_names: string[] = [];
+  let previews: SharedTypes.ChatPreview[] = [];
 
   response.map((val: any) => {
-    messages.push({
-      id: val.id,
-      sender_id: userId,
-      text: val.text,
-      peer_id: val.peer_id,
+    previews.push({
+      message: {
+        id: val.id,
+        sender_id: userId,
+        text: val.text,
+        peer_id: val.peer_id,
+      },
+      peerName: val.peer_username,
     });
-    peer_names.push(val.peer_username);
   });
 
-  return [messages, peer_names];
+  return previews;
 }
 
 export async function GetUserIdFromName(
