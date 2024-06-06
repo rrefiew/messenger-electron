@@ -257,29 +257,39 @@ export function Chat({
   nickname,
   lastMessage,
   peerId,
+  onClick,
+  isActive,
 }: {
   nickname: string;
   lastMessage?: string;
   peerId?: number;
+  onClick?: () => Promise<void>;
+  isActive?: boolean;
 }) {
   const { User } = UseAuthUser();
   const { SelectDialogue } = useDialogue();
   React.useEffect(() => {}, [lastMessage]);
   let style: any = {};
   if (peerId && User) {
-    style = peerId === User.id ? { color: "red" } : { color: "blue" };
+    style = peerId === User.id ? { color: "#DB7093" } : { color: "black" };
   }
   return (
     <div
-      className="chatBox"
+      className={isActive ? "chatBoxbuttonClicked" : "chatBox"}
       style={{ cursor: "pointer" }}
-      onClick={() => {
+      onClick={async () => {
+        if (onClick) {
+          await onClick();
+        }
         SelectDialogue(nickname);
         socket.emit("update", "wow");
       }}
     >
-      <p className="chatNick">{nickname}</p>
-      <p className="chatLastmess" style={style}>
+      <p className={!isActive ? "chatNick" : "chatNickBC"}>{nickname}</p>
+      <p
+        className={!isActive ? "chatLastmess" : "chatLastmessBC"}
+        style={style}
+      >
         {lastMessage ?? "..."}
       </p>
     </div>
@@ -327,7 +337,7 @@ export function NickSearch() {
 export function Chats() {
   const { User } = UseAuthUser();
   const [previews, setPreviews] = useState<SharedTypes.ChatPreview[]>();
-
+  const [activeChat, setActiveChat] = useState(-1);
   React.useEffect(() => {
     const handler = (updatedData: any) => {
       console.log("socket on updated data fetch messages");
@@ -346,13 +356,21 @@ export function Chats() {
       <form id="messForm">
         <div className="chatForm">
           {previews &&
-            previews.map((preview) => (
-              <Chat
-                nickname={preview.peerName}
-                peerId={preview.message.peer_id}
-                lastMessage={preview.message.text}
-              />
-            ))}
+            previews.map((preview) =>
+              preview.message.peer_id !== preview.message.sender_id ? (
+                <Chat
+                  nickname={preview.peerName}
+                  peerId={preview.message.peer_id}
+                  lastMessage={preview.message.text}
+                  isActive={activeChat === preview.message.peer_id}
+                  onClick={async () => {
+                    setActiveChat(preview.message.peer_id);
+                  }}
+                />
+              ) : (
+                <></>
+              )
+            )}
         </div>
         <MessForm />
       </form>
