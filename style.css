@@ -181,19 +181,16 @@ input[type="txt"] {
   display: flex;
     justify-content: center;
     width: 50%;
-    margin-bottom: 9%;
     overflow-y: auto;
-    max-height: 200vh;
 }
 
 .form_message {
   width: 80%;
-  height: 80%;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  max-height: 100%;
-  max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 300vh;
+    height: 48vh;
 }
 
 .form_message_otherus p {
@@ -251,7 +248,8 @@ input[type="txt"] {
   gap: 2vh;
   overflow-y: auto;
 }
-.chatBox {
+.chatBox,
+.chatBoxbuttonClicked {
   border: solid rgb(6 6 6) 3px;
   border-radius: 5px;
   color: #000000;
@@ -265,17 +263,26 @@ input[type="txt"] {
   max-height: 100%;
 }
 
-.chatNick {
+.chatNick,
+.chatNickBC {
   margin-left: 5vh;
 }
 
-.chatLastmess {
+.chatLastmess,
+.chatLastmessBC {
   margin-left: 5vh;
     max-width: 90%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.chatBoxbuttonClicked,
+.chatNickBC,
+.chatLastmessBC{
+  background-color: #346e97;
+}
+
 
 .nickSearch {
   position: absolute;
