@@ -123,6 +123,55 @@ export async function PostSendMessage(
   }
 }
 
+export async function GetLatestMessagesid(
+  userId: number,
+  connection: Connection
+): Promise<SharedTypes.ChatPreview[]> {
+  let [response]: any = await connection.query(
+    `SELECT um.*, ud.username as "peer_username"
+FROM user_messages um
+JOIN users_data ud ON 
+    CASE 
+        WHEN um.sender_id = ${userId} THEN um.peer_id 
+        ELSE um.sender_id 
+    END = ud.id
+JOIN (
+    SELECT 
+        CASE 
+            WHEN sender_id = ${userId} THEN peer_id 
+            ELSE sender_id 
+        END AS user_id,
+        MAX(sent_at) AS latest_sent_at
+    FROM user_messages
+    WHERE sender_id = ${userId} OR peer_id = ${userId}
+    GROUP BY user_id
+) AS latest ON 
+    CASE 
+        WHEN um.sender_id = ${userId} THEN um.peer_id 
+        ELSE um.sender_id 
+    END = latest.user_id
+    AND um.sent_at = latest.latest_sent_at
+WHERE um.sender_id = ${userId} OR um.peer_id = ${userId};
+`
+  );
+
+  let previews: SharedTypes.ChatPreview[] = [];
+
+  response.map((val: any) => {
+    previews.push({
+      message: {
+        id: val.id,
+        sender_id: val.sender_id,
+        text: val.text,
+        peer_id: val.peer_id,
+      },
+      peerName: val.peer_username,
+    });
+  });
+
+  return previews;
+}
+
 export async function GetUserIdFromName(
   name: string,
   connection: Connection

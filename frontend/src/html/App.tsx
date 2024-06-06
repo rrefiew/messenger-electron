@@ -18,13 +18,11 @@ import { socket } from "../ts/socket";
 
 export function MessForm() {
   return (
-    <form id="messForm">
-      <div className="form_form">
-        <div className="form_message">
-          <DialogueRoom />
-        </div>
+    <div className="form_form">
+      <div className="form_message">
+        <DialogueRoom />
       </div>
-    </form>
+    </div>
   );
 }
 

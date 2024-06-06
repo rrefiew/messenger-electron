@@ -23,8 +23,9 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
 
 io.on("connection", (socket) => {
-  console.log("new connection!");
+  console.log("New connection!");
 });
+
 // Make connection just for the db. Shoukd be changed later
 
 var connection: Connection;
@@ -64,6 +65,18 @@ app.get(
       }
     } catch (_e: any) {
       console.log(_e);
+    }
+  }
+);
+
+app.get(
+  "/danger_zone/messages/query_last_messages_sent_to_user/:id",
+  async (req, res) => {
+    try {
+      const previews = await Handlers.GetLatestMessagesid(+req.params.id, pool);
+      res.status(200).send(previews);
+    } catch (_e: any) {
+      res.status(404).send(_e);
     }
   }
 );
