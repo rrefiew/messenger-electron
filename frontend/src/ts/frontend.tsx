@@ -256,12 +256,19 @@ export function VerticalLine() {
 export function Chat({
   nickname,
   lastMessage,
+  peerId,
 }: {
   nickname: string;
   lastMessage?: string;
+  peerId?: number;
 }) {
+  const { User } = UseAuthUser();
   const { SelectDialogue } = useDialogue();
   React.useEffect(() => {}, [lastMessage]);
+  let style: any = {};
+  if (peerId && User) {
+    style = peerId === User.id ? { color: "red" } : { color: "blue" };
+  }
   return (
     <div
       className="chatBox"
@@ -272,7 +279,9 @@ export function Chat({
       }}
     >
       <p className="chatNick">{nickname}</p>
-      <p className="chatLastmess">{lastMessage ?? "..."}</p>
+      <p className="chatLastmess" style={style}>
+        {lastMessage ?? "..."}
+      </p>
     </div>
   );
 }
@@ -320,8 +329,18 @@ export function Chats() {
   const [previews, setPreviews] = useState<SharedTypes.ChatPreview[]>();
 
   React.useEffect(() => {
+    const handler = (updatedData: any) => {
+      console.log("socket on updated data fetch messages");
+      getLastPreviews(User ? User.id : -1).then((value) => setPreviews(value));
+    };
     getLastPreviews(User ? User.id : -1).then((value) => setPreviews(value));
-  }, []);
+    socket.on("update", handler);
+
+    //fetchMessages(); // Call the async function
+    return () => {
+      socket.off("update", handler);
+    };
+  }, [previews]);
 
   return (
     <div className="Chats">
@@ -331,6 +350,7 @@ export function Chats() {
             previews.map((preview) => (
               <Chat
                 nickname={preview.peerName}
+                peerId={preview.message.peer_id}
                 lastMessage={preview.message.text}
               />
             ))}

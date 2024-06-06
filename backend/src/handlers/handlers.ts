@@ -128,19 +128,31 @@ export async function GetLatestMessagesid(
   connection: Connection
 ): Promise<SharedTypes.ChatPreview[]> {
   let [response]: any = await connection.query(
-    `SELECT um.id, um.text, um.peer_id, ud.username AS "peer_username"
-FROM user_messages AS um
+    `SELECT um.*, ud.username as "peer_username"
+FROM user_messages um
+JOIN users_data ud ON 
+    CASE 
+        WHEN um.sender_id = ${userId} THEN um.peer_id 
+        ELSE um.sender_id 
+    END = ud.id
 JOIN (
-    SELECT MAX(id) AS max_id, peer_id
+    SELECT 
+        CASE 
+            WHEN sender_id = ${userId} THEN peer_id 
+            ELSE sender_id 
+        END AS user_id,
+        MAX(sent_at) AS latest_sent_at
     FROM user_messages
-    WHERE sender_id = ${userId}
-    GROUP BY peer_id
-) AS latest_um ON um.id = latest_um.max_id
-JOIN users_data AS ud ON ud.id = um.peer_id
-WHERE um.sender_id = 1011
-GROUP BY um.peer_id
-HAVING COUNT(um.peer_id) >= 1
-ORDER BY sent_at;`
+    WHERE sender_id = ${userId} OR peer_id = ${userId}
+    GROUP BY user_id
+) AS latest ON 
+    CASE 
+        WHEN um.sender_id = ${userId} THEN um.peer_id 
+        ELSE um.sender_id 
+    END = latest.user_id
+    AND um.sent_at = latest.latest_sent_at
+WHERE um.sender_id = ${userId} OR um.peer_id = ${userId};
+`
   );
   let previews: SharedTypes.ChatPreview[] = [];
 
