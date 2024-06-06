@@ -12,6 +12,7 @@ const path = require("node:path");
 //функция createWindow() загружает веб-страницу в новый экземпляр BrowserWindow
 const createWindow = () => {
   const win = new BrowserWindow({
+    frame: false,
     width: 800,
     height: 600,
     webPreferences: {
