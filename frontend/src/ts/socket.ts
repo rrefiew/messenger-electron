@@ -1,4 +1,6 @@
 import io from "socket.io-client";
 //Hardcoded:
 
-export const socket = io("http://localhost:3001");
+const SiteLocation = "https://quagunesop.beget.app";
+
+export const socket = io(SiteLocation);

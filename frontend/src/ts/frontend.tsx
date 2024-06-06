@@ -18,7 +18,7 @@ export class Dialogue {
   }
 }
 
-const SiteLocation = "http://localhost:3001";
+const SiteLocation = "https://quagunesop.beget.app";
 
 export async function sendMessage(
   message: SharedTypes.UserMessage

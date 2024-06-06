@@ -1,4 +1,4 @@
-const SiteLocation = "http://localhost:3001";
+const SiteLocation = "https://quagunesop.beget.app";
 
 export async function insertNewUserIntoDatabase(
   new_user_username: string,

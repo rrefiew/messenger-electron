@@ -180,6 +180,7 @@ export async function GetUserIdFromName(
     let [results] = await connection.query(
       `SELECT id FROM users_data WHERE username = '${name}'`
     );
+    console.log(results);
     const user = (results as any)[0] as User;
     if (!user) {
       return Promise.reject(new BackendError(501, "User was not found"));
