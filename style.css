@@ -238,15 +238,18 @@ input[type="txt"] {
 #message,
 #nick {
   width: 90%;
+  height: 7vh;
+  font-size: 20px;
 }
 .chatForm {
   width: 50%;
   height: 80%;
   display: flex;
   max-height: 67vh;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 2vh;
   overflow-y: auto;
+  flex-direction: column-reverse;
 }
 .chatBox,
 .chatBoxbuttonClicked {
@@ -256,7 +259,6 @@ input[type="txt"] {
   height: auto;
   padding: 5px;
   overflow-wrap: break-word;
-  overflow-x: hidden;
   height: auto;
   width: 90%;
   margin-left: 3vh;
