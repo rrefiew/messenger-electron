@@ -2,12 +2,11 @@ import * as React from "react";
 import { redirectDocument, redirect, Link } from "react-router-dom";
 import { socket } from "./socket";
 import Kot from "../html/kot.png";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { UseAuthUser } from "./contexts";
 
 import * as SharedTypes from "../../../shared_types/types";
 import { useDialogue } from "./dialogue_context";
-import { MessForm } from "../html/App";
 
 export class Dialogue {
   peer_id: number;
@@ -43,6 +42,7 @@ export async function sendMessage(
   return true;
 }
 
+
 async function getLastPreviews(
   userId: number
 ): Promise<SharedTypes.ChatPreview[]> {
@@ -66,6 +66,7 @@ async function getLastPreviews(
     new Error("Something went wrong! Could not fetch at getLastPreviews")
   );
 }
+
 
 async function getLastMessages(
   user_id: number,
@@ -110,7 +111,6 @@ function LoginForm() {
         required
         onChange={(password) => {
           setPassword(password.target.value);
-          //Change this maybe?
         }}
       />
       <br />
@@ -135,6 +135,7 @@ function LoginForm() {
           />
         </p>
       </div>
+      
       <div className="loginFormKot">
         <img src={Kot} alt="Kot.png" />
       </div>
@@ -180,7 +181,6 @@ export function ChatMessage({
     }
     return "message_us".toString();
   };
-
   return (
     <>
       <p className={us_class_name()}>{message_text}</p>
@@ -215,9 +215,9 @@ export function DialogueRoom() {
       console.log("socket on updated data fetch messages");
       fetchMessages();
     };
+
     socket.on("update", handler);
     fetchMessages();
-
     //fetchMessages(); // Call the async function
     return () => {
       socket.off("update", handler);
@@ -248,6 +248,7 @@ export function DialogueRoom() {
     </>
   );
 }
+
 
 export function VerticalLine() {
   return <div className="line_vertical"></div>;
@@ -383,3 +384,4 @@ export function Chats() {
     </div>
   );
 }
+
