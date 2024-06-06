@@ -271,7 +271,7 @@ export function Chat({
   React.useEffect(() => {}, [lastMessage]);
   let style: any = {};
   if (peerId && User) {
-    style = peerId === User.id ? { color: "#DB7093" } : { color: "black" };
+    style = peerId === User.id ? { color: "black" } : { color: "#5F9EA0" };
   }
   return (
     <div
@@ -337,7 +337,8 @@ export function NickSearch() {
 export function Chats() {
   const { User } = UseAuthUser();
   const [previews, setPreviews] = useState<SharedTypes.ChatPreview[]>();
-  const [activeChat, setActiveChat] = useState(-1);
+  const [activeChatPeer, setActiveChatPeer] = useState(-1);
+  const [activeChatSender, setActiveChatSender] = useState(-1);
   React.useEffect(() => {
     const handler = (updatedData: any) => {
       console.log("socket on updated data fetch messages");
@@ -362,9 +363,13 @@ export function Chats() {
                   nickname={preview.peerName}
                   peerId={preview.message.peer_id}
                   lastMessage={preview.message.text}
-                  isActive={activeChat === preview.message.peer_id}
+                  isActive={
+                    activeChatPeer === preview.message.peer_id &&
+                    activeChatSender === preview.message.sender_id
+                  }
                   onClick={async () => {
-                    setActiveChat(preview.message.peer_id);
+                    setActiveChatPeer(preview.message.peer_id);
+                    setActiveChatSender(preview.message.sender_id);
                   }}
                 />
               ) : (

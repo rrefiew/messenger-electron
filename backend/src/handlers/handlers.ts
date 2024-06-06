@@ -154,13 +154,14 @@ JOIN (
 WHERE um.sender_id = ${userId} OR um.peer_id = ${userId};
 `
   );
+
   let previews: SharedTypes.ChatPreview[] = [];
 
   response.map((val: any) => {
     previews.push({
       message: {
         id: val.id,
-        sender_id: userId,
+        sender_id: val.sender_id,
         text: val.text,
         peer_id: val.peer_id,
       },
