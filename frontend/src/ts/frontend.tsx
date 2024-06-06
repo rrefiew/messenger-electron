@@ -333,19 +333,18 @@ export function Chats() {
       console.log("socket on updated data fetch messages");
       getLastPreviews(User ? User.id : -1).then((value) => setPreviews(value));
     };
-    getLastPreviews(User ? User.id : -1).then((value) => setPreviews(value));
     socket.on("update", handler);
-
+    getLastPreviews(User ? User.id : -1).then((value) => setPreviews(value));
     //fetchMessages(); // Call the async function
     return () => {
       socket.off("update", handler);
     };
-  }, [previews]);
+  }, []);
 
   return (
     <div className="Chats">
       <form id="messForm">
-        <div className="chatForm">
+        <div className="chatForm" style={{ flexDirection: "column-reverse" }}>
           {previews &&
             previews.map((preview) => (
               <Chat

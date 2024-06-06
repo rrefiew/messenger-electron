@@ -16,6 +16,7 @@ import {
   getFirstUserIdFromName,
   insertNewUserIntoDatabase,
 } from "./registration";
+import { socket } from "./socket";
 
 interface UserProps {
   User: User | null;
@@ -63,7 +64,7 @@ export const AuthProvider: FC<UserAuthProvider> = memo(({ children }) => {
       return null;
     }
 
-    setLoggedInUser({ id: 0, username: username, password: password });
+    setLoggedInUser({ id: user_id, username: username, password: password });
     setIsLoggedIn(true);
     console.log("LoggedInUser", User);
     return user_id;
