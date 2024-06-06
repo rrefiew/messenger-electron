@@ -9,10 +9,12 @@ import {
   useState,
 } from "react";
 
+import dotenv from "dotenv";
+
 import { User } from "../../../shared_types/types";
 import { setSyntheticTrailingComments } from "typescript";
 
-const SiteLocation = "http://localhost:3001";
+const SiteLocation = "https://quagunesop.beget.app";
 
 export class Dialogue {
   peer_id: number;
