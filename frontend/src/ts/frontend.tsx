@@ -344,7 +344,7 @@ export function Chats() {
   return (
     <div className="Chats">
       <form id="messForm">
-        <div className="chatForm" style={{ flexDirection: "column-reverse" }}>
+        <div className="chatForm">
           {previews &&
             previews.map((preview) => (
               <Chat
