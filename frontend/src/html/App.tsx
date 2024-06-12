@@ -65,13 +65,8 @@ export function QueryUser() {
 }
 
 export function SendMessage() {
-  let { dialogue, SelectDialogue } = useDialogue();
+  let { dialogue } = useDialogue();
   const [message, setMessage] = React.useState("");
-  const handleInput = (event: any) => {
-    setMessage(event.target.value);
-  };
-
-  useEffect(() => {}, [message]);
 
   async function handleOnClickSendingMessage(dialogue: Dialogue, text: string) {
     if (text.length === 0) {
@@ -104,6 +99,10 @@ export function SendMessage() {
     });
   }
 
+  const handleInput = (event: any) => {
+    setMessage(event.target.value);
+  };
+
   return (
     <div className="send_message">
       <textarea
@@ -135,9 +134,6 @@ export function SendMessage() {
 function AB() {
   let { LogOut } = UseAuthUser();
   let { isDialogueActive } = useDialogue();
-  useEffect(() => {
-    console.log(isDialogueActive);
-  }, [isDialogueActive]);
 
   return (
     <>
@@ -160,14 +156,6 @@ function AB() {
             <h2>Чаты</h2>
             <h3>Сообщения</h3>
           </div>
-          {/* <div
-            style={{
-              display: "flex",
-              width: "100vw",
-              justifyContent: "space-around",
-            }}
-          >
-            <QueryUser /> */}
           <Chats />
           <VerticalLine />
           {isDialogueActive ? (
@@ -184,9 +172,8 @@ function AB() {
 }
 
 export function RegisterOrMain() {
-  let { LogOut, LogIn, isLoggedIn, User } = UseAuthUser();
+  let { isLoggedIn } = UseAuthUser();
 
-  console.log(User);
   return isLoggedIn ? (
     <DialogueProvider>
       <AB />

@@ -16,6 +16,9 @@
   "keywords": [
     "pipipipi"
   ],
+  "build": {
+    "executableName": "Nesil"
+  },
   "author": "pipa",
   "license": "UNLICENSED",
   "devDependencies": {

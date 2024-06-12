@@ -207,7 +207,7 @@ export function DialogueRoom() {
     const fetchMessages = async () => {
       console.log("fetchmessages");
       if (dialogue !== null) {
-        setMessages(await getLastMessages(+userId, dialogue, 10));
+        setMessages(await getLastMessages(+userId, dialogue, 100));
       }
     };
 
@@ -364,8 +364,10 @@ export function Chats() {
                   peerId={preview.message.peer_id}
                   lastMessage={preview.message.text}
                   isActive={
-                    activeChatPeer === preview.message.peer_id &&
-                    activeChatSender === preview.message.sender_id
+                    (activeChatPeer === preview.message.peer_id ||
+                      activeChatPeer === preview.message.sender_id) &&
+                    (activeChatSender === preview.message.sender_id ||
+                      activeChatSender === preview.message.peer_id)
                   }
                   onClick={async () => {
                     setActiveChatPeer(preview.message.peer_id);
