@@ -12,15 +12,16 @@ const cors = require("cors");
 import * as Handlers from "./handlers/handlers";
 
 dotenv.config();
+const port = process.env.PORT || 3001;
+const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || "";
 
 const app: Express = express();
-const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors());
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, { cors: { origin: "*" } });
 
 io.on("connection", (socket) => {
   console.log("New connection!");
@@ -33,7 +34,7 @@ var connection: Connection;
 let db_config = {
   host: "nadya59k.beget.tech",
   user: "nadya59k_55",
-  password: "nZU6%Dw4",
+  password: DATABASE_PASSWORD,
   database: "nadya59k_55",
   waitForConnections: true,
   connectionLimit: 10,
@@ -107,7 +108,6 @@ app.post(
 
 app.get("/users/get_user_from_id/:id", async (req, res) => {
   let id: number = +req.params.id;
-  // await pool.connect();
   const user = await Handlers.GetUserFromId(id, pool).catch((_e) =>
     console.log(_e)
   );
@@ -172,6 +172,5 @@ app.get(
 );
 
 server.listen(port, () => {
-  //connection.connect();
   console.log(`Backend server listening at http://localhost:${port}`);
 });

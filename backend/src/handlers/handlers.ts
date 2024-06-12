@@ -53,7 +53,7 @@ export async function PostInsertNewUser(user: User, connection: Connection) {
     return Promise.reject(new BackendError(501, "No password was specified"));
   }
   const [hash, salt] = encrypt(user.password, generateSalt());
-  let [results] = await connection.query(
+  return connection.query(
     `INSERT INTO users_data(username, password, salt) VALUES ('${user.name}', '${hash}', '${salt}')`
   );
 }
