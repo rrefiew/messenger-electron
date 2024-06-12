@@ -207,7 +207,7 @@ export function DialogueRoom() {
     const fetchMessages = async () => {
       console.log("fetchmessages");
       if (dialogue !== null) {
-        setMessages(await getLastMessages(+userId, dialogue, 10));
+        setMessages(await getLastMessages(+userId, dialogue, 100));
       }
     };
 
