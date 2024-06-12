@@ -12,16 +12,16 @@ const path = require("node:path");
 //функция createWindow() загружает веб-страницу в новый экземпляр BrowserWindow
 const createWindow = () => {
   const win = new BrowserWindow({
-    frame: false,
+    frame: true,
     width: 800,
-    height: 600,
+    height: 1200,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  win.maximize();
-  win.loadURL("http://localhost:3000");
-  win.webContents.openDevTools();
+  //win.maximize();
+  win.loadURL("https://quagunesop.beget.app/build/");
+  // win.webContents.openDevTools();
   //win.loadFile("./frontend/build/index.html");
 };
 
