@@ -364,8 +364,10 @@ export function Chats() {
                   peerId={preview.message.peer_id}
                   lastMessage={preview.message.text}
                   isActive={
-                    activeChatPeer === preview.message.peer_id &&
-                    activeChatSender === preview.message.sender_id
+                    (activeChatPeer === preview.message.peer_id ||
+                      activeChatPeer === preview.message.sender_id) &&
+                    (activeChatSender === preview.message.sender_id ||
+                      activeChatSender === preview.message.peer_id)
                   }
                   onClick={async () => {
                     setActiveChatPeer(preview.message.peer_id);
